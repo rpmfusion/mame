@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 137
-#global sourceupdate 4
+%global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -10,7 +10,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 Group:          Applications/Emulators
@@ -22,6 +22,8 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 #Source1:        ui.bdc
 %if 0%{?sourceupdate}
 #Source updates
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-ppc64.patch
@@ -218,6 +220,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Fri Apr 09 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.137u2-1
+- Updated to 0137u2
+
 * Sun Mar 21 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.137-4
 - Stripped @ from the commands to make the build more verbose
 
