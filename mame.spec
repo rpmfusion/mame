@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 137
-%global sourceupdate 2
+%global sourceupdate 3
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -24,9 +24,9 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-ppc64.patch
 Patch2:         %{name}-verbosebuild.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -86,9 +86,6 @@ for sourcefile in %{sources}; do
     7za x $sourcefile
 done
 find . -type f -not -name uismall.png -exec sed -i 's/\r//' {} \;
-%patch0 -p1 -b .fortify
-%patch1 -p1 -b .ppc64
-%patch2 -p1 -b .verbosebuild
 %if 0%{?sourceupdate}
 i=1
 while [ $i -le %{sourceupdate} ]; do
@@ -96,6 +93,8 @@ while [ $i -le %{sourceupdate} ]; do
     i=`expr $i + 1`
 done
 %endif
+%patch0 -p1 -b .fortify
+%patch2 -p1 -b .verbosebuild
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -220,6 +219,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Apr 22 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.137u3-1
+- Updated to 0137u3
+- Dropped upstreamed ppc64 patch
+- Moved rpm patches application after upstream ones
+
 * Fri Apr 09 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.137u2-1
 - Updated to 0137u2
 
