@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 138
-%global sourceupdate 1
+%global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -15,7 +15,7 @@ Summary:        Multiple Arcade Machine Emulator
 
 Group:          Applications/Emulators
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
-License:        MAME License and BSD
+License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}s.exe
 #ui.bdc generated from ui.bdf
@@ -23,7 +23,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
@@ -128,7 +128,16 @@ EOF
 
 
 %build
-echo `pkg-config --cflags gtk+-2.0`
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
+%if %{with debug}
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' DEBUG=1 all
+%else
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' all
+%endif
+
 
 %install
 rm -rf %{buildroot}
@@ -211,6 +220,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jun 17 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u2-1
+- Updated to 0.138u2
+- Adjusted the license tag - it concerns the binary, not the source
+
 * Fri May 28 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u1-1
 - Updated to 0.138u1
 
