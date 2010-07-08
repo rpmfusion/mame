@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 138
-%global sourceupdate 2
+%global sourceupdate 3
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -24,7 +24,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
@@ -220,6 +220,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jul 08 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u3-1
+- Updated to 0.138u3
+- Updated the verbosebuild patch
+
 * Thu Jun 17 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u2-1
 - Updated to 0.138u2
 - Adjusted the license tag - it concerns the binary, not the source
