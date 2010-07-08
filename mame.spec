@@ -70,12 +70,12 @@ Obsoletes:      sdlmame-tools < 0136-2
 %description tools
 %{summary}.
 
-%package ldplayer
-Summary:        Standalone laserdisc player based on MAME
-Group:          Applications/Emulators
+#%package ldplayer
+#Summary:        Standalone laserdisc player based on MAME
+#Group:          Applications/Emulators
 
-Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
-Obsoletes:      sdlmame-ldplayer < 0136-2
+#Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
+#Obsoletes:      sdlmame-ldplayer < 0136-2
 
 %description ldplayer
 %{summary}.
@@ -128,8 +128,8 @@ EOF
 
 
 %build
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
-    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
+#make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+#    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
 %if %{with debug}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
     OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' DEBUG=1 all
@@ -173,7 +173,7 @@ install -pm 755 %{name}d %{buildroot}%{_bindir}
 %else
 install -pm 755 %{name} %{buildroot}%{_bindir}
 %endif
-install -pm 755 chdman jedutil ldplayer ldresample ldverify \
+install -pm 755 chdman jedutil ldresample ldverify \
     romcmp testkeys unidasm %{buildroot}%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
@@ -214,15 +214,16 @@ rm -rf %{buildroot}
 %{_bindir}/testkeys
 %{_bindir}/unidasm
 
-%files ldplayer
-%defattr(-,root,root,-)
-%{_bindir}/ldplayer
+#%files ldplayer
+#%defattr(-,root,root,-)
+#%{_bindir}/ldplayer
 
 
 %changelog
 * Thu Jul 08 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u3-1
 - Updated to 0.138u3
 - Updated the verbosebuild patch
+- Disabled ldplayer since it does not build ATM (mametesters #3930)
 
 * Thu Jun 17 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u2-1
 - Updated to 0.138u2
