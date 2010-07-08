@@ -77,8 +77,8 @@ Obsoletes:      sdlmame-tools < 0136-2
 #Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
 #Obsoletes:      sdlmame-ldplayer < 0136-2
 
-%description ldplayer
-%{summary}.
+#%description ldplayer
+#%{summary}.
 
 
 %prep
