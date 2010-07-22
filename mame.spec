@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 138
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -25,7 +25,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -153,6 +153,7 @@ install -d %{buildroot}%{_datadir}/%{name}/keymaps
 install -d %{buildroot}%{_datadir}/%{name}/roms
 install -d %{buildroot}%{_datadir}/%{name}/samples
 install -d %{buildroot}%{_datadir}/%{name}/cheats
+install -d %{buildroot}%{_mandir}/man1
 install -d %{buildroot}%{_sysconfdir}/%{name}
 install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/cfg
 install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/comments
@@ -180,6 +181,10 @@ for tool in regrep split src2html srcclean
 do
 install -pm 755 $tool %{buildroot}%{_bindir}/%{name}-$tool
 done
+pushd src/osd/sdl/man
+install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.1 romcmp.1 \
+    testkeys.1 %{buildroot}%{_mandir}/man1
+popd
 
 
 %clean
@@ -197,6 +202,7 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}
 %endif
 %{_datadir}/%{name}
+%{_mandir}/man1/mame.1*
 %{_sysconfdir}/skel/.%{name}
 
 %files tools
@@ -213,13 +219,23 @@ rm -rf %{buildroot}
 %{_bindir}/%{name}-srcclean
 %{_bindir}/testkeys
 %{_bindir}/unidasm
+%{_mandir}/man1/chdman.1*
+%{_mandir}/man1/jedutil.1*
+%{_mandir}/man1/ldverify.1*
+%{_mandir}/man1/romcmp.1*
+%{_mandir}/man1/testkeys.1*
 
 #%files ldplayer
 #%defattr(-,root,root,-)
 #%{_bindir}/ldplayer
+#%{_mandir}/man1/ldplayer.1*
 
 
 %changelog
+* Thu Jul 22 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u4-1
+- Updated to 0.138u4
+- Install the new manpages
+
 * Thu Jul 08 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u3-1
 - Updated to 0.138u3
 - Updated the verbosebuild patch
