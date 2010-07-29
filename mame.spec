@@ -1,8 +1,8 @@
 # the debug build is disabled by default, please use --with debug to override
 %bcond_with debug
 
-%global baseversion 138
-%global sourceupdate 4
+%global baseversion 139
+#global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -232,6 +232,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jul 29 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.139
+- Updated to 0.139
+
 * Thu Jul 22 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.138u4-1
 - Updated to 0.138u4
 - Install the new manpages
