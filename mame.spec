@@ -10,7 +10,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 Group:          Applications/Emulators
@@ -232,6 +232,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Oct 14 2010 Nicolas Chauvet <kwizart@gmail.com> - 0.139u3-2
+- Rebuilt for gcc bug
+
 * Sun Sep 19 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.139u3-1
 - Updated to 0.139u3
 - Updated the verbosebuild patch
