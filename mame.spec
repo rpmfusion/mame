@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 139
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -10,7 +10,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 Group:          Applications/Emulators
@@ -25,7 +25,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -232,6 +232,9 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Sat Oct 16 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.139u4-1
+- Updated to 0.139u4
+
 * Thu Oct 14 2010 Nicolas Chauvet <kwizart@gmail.com> - 0.139u3-2
 - Rebuilt for gcc bug
 
