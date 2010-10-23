@@ -1,8 +1,8 @@
 # the debug build is disabled by default, please use --with debug to override
 %bcond_with debug
 
-%global baseversion 139
-%global sourceupdate 4
+%global baseversion 140
+#global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,10 +22,10 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 #Source1:        ui.bdc
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -70,15 +70,15 @@ Obsoletes:      sdlmame-tools < 0136-2
 %description tools
 %{summary}.
 
-#%package ldplayer
-#Summary:        Standalone laserdisc player based on MAME
-#Group:          Applications/Emulators
+%package ldplayer
+Summary:        Standalone laserdisc player based on MAME
+Group:          Applications/Emulators
 
-#Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
-#Obsoletes:      sdlmame-ldplayer < 0136-2
+Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
+Obsoletes:      sdlmame-ldplayer < 0136-2
 
-#%description ldplayer
-#%{summary}.
+%description ldplayer
+%{summary}.
 
 
 %prep
@@ -128,8 +128,8 @@ EOF
 
 
 %build
-#make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
-#    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
 %if %{with debug}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
     OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' DEBUG=1 all
@@ -174,7 +174,7 @@ install -pm 755 %{name}d %{buildroot}%{_bindir}
 %else
 install -pm 755 %{name} %{buildroot}%{_bindir}
 %endif
-install -pm 755 chdman jedutil ldresample ldverify \
+install -pm 755 chdman jedutil ldplayer ldresample ldverify \
     romcmp testkeys unidasm %{buildroot}%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
@@ -182,7 +182,7 @@ do
 install -pm 755 $tool %{buildroot}%{_bindir}/%{name}-$tool
 done
 pushd src/osd/sdl/man
-install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.1 romcmp.1 \
+install -pm 644 chdman.1 jedutil.1 ldplayer.1 ldverify.1 mame.1 romcmp.1 \
     testkeys.1 %{buildroot}%{_mandir}/man1
 popd
 
@@ -225,13 +225,17 @@ rm -rf %{buildroot}
 %{_mandir}/man1/romcmp.1*
 %{_mandir}/man1/testkeys.1*
 
-#%files ldplayer
-#%defattr(-,root,root,-)
-#%{_bindir}/ldplayer
-#%{_mandir}/man1/ldplayer.1*
+%files ldplayer
+%defattr(-,root,root,-)
+%{_bindir}/ldplayer
+%{_mandir}/man1/ldplayer.1*
 
 
 %changelog
+* Thu Oct 21 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.140-1
+- Updated to 0.140
+- Re-enabled ldplayer
+
 * Sat Oct 16 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.139u4-1
 - Updated to 0.139u4
 
