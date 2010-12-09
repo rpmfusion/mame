@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 140
-%global sourceupdate 1
+%global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -18,12 +18,10 @@ Group:          Applications/Emulators
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}s.exe
-#ui.bdc generated from ui.bdf
-#Source1:        ui.bdc
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
@@ -35,7 +33,7 @@ BuildRequires:  expat-devel
 BuildRequires:  GConf2-devel
 BuildRequires:  gtk2-devel
 BuildRequires:  p7zip
-BuildRequires:  SDL-devel
+BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 
 Provides:       sdlmame = 0%{baseversion}-%{release}
@@ -232,6 +230,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Dec 09 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.140u2-1
+- Updated to 0.140u2
+- Added SDL_ttf-devel to BuildRequires, removed explicit SDL-devel
+
 * Mon Nov 08 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.140u1-1
 - Updated to 0.140u1
 
