@@ -1,8 +1,8 @@
 # the debug build is disabled by default, please use --with debug to override
 %bcond_with debug
 
-%global baseversion 140
-%global sourceupdate 2
+%global baseversion 141
+#global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -92,7 +92,7 @@ while [ $i -le %{sourceupdate} ]; do
     i=`expr $i + 1`
 done
 %endif
-%patch0 -p1 -b .fortify
+#patch0 -p1 -b .fortify
 %patch2 -p1 -b .verbosebuild
 
 # Create ini file
@@ -230,6 +230,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Jan 13 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141-1
+- Updated to 0.141
+- Temporarily dropped the fortify patch
+
 * Thu Dec 09 2010 Julian Sikorski <belegdol@fedoraproject.org> - 0.140u2-1
 - Updated to 0.140u2
 - Added SDL_ttf-devel to BuildRequires, removed explicit SDL-devel
