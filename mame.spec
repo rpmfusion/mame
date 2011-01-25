@@ -2,7 +2,7 @@
 %bcond_with debug
 
 %global baseversion 141
-#global sourceupdate 2
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -21,7 +21,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
@@ -92,7 +92,7 @@ while [ $i -le %{sourceupdate} ]; do
     i=`expr $i + 1`
 done
 %endif
-#patch0 -p1 -b .fortify
+%patch0 -p1 -b .fortify
 %patch2 -p1 -b .verbosebuild
 
 # Create ini file
@@ -230,6 +230,10 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Mon Jan 24 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u1-1
+- Updated to 0.141u1
+- Re-enabled the fortify patch
+
 * Thu Jan 13 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141-1
 - Updated to 0.141
 - Temporarily dropped the fortify patch
