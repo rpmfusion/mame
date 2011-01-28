@@ -26,6 +26,7 @@ Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
+Patch1:         %{name}-gcc46.patch
 Patch2:         %{name}-verbosebuild.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -93,6 +94,7 @@ while [ $i -le %{sourceupdate} ]; do
 done
 %endif
 %patch0 -p1 -b .fortify
+%patch1 -p1 -b .gcc46
 %patch2 -p1 -b .verbosebuild
 
 # Create ini file
@@ -233,6 +235,7 @@ rm -rf %{buildroot}
 * Mon Jan 24 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u1-1
 - Updated to 0.141u1
 - Re-enabled the fortify patch
+- Fixed building with gcc-4.6
 
 * Thu Jan 13 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141-1
 - Updated to 0.141
