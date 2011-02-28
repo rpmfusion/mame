@@ -1,8 +1,11 @@
-# the debug build is disabled by default, please use --with debug to override
+# ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
+# if it does not build. The debug build is disabled by default, please use
+# --with debug to override
+%bcond_without ldplayer
 %bcond_with debug
 
 %global baseversion 141
-%global sourceupdate 2
+%global sourceupdate 3
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,7 +25,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
@@ -68,6 +71,7 @@ Obsoletes:      sdlmame-tools < 0136-2
 %description tools
 %{summary}.
 
+%if %{with ldplayer}
 %package ldplayer
 Summary:        Standalone laserdisc player based on MAME
 Group:          Applications/Emulators
@@ -77,6 +81,7 @@ Obsoletes:      sdlmame-ldplayer < 0136-2
 
 %description ldplayer
 %{summary}.
+%endif
 
 
 %prep
@@ -121,72 +126,81 @@ state_directory    \$HOME/.%{name}/sta
 # Fedora custom defaults
 video              opengl
 autosave           1
-joystick           1
 EOF
 
 
 %build
+#these flags are already included in the Makefile
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
+
+%if %{with ldplayer}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
-    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' TARGET=ldplayer
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" TARGET=ldplayer
+%endif
 %if %{with debug}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
-    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' DEBUG=1 all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" DEBUG=1 all
 %else
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
-    OPT_FLAGS='%{optflags} -DINI_PATH="\"%{_sysconfdir}/%{name};\""' all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 %endif
 
 
 %install
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 # create directories
-install -d %{buildroot}%{_bindir}
-install -d %{buildroot}%{_datadir}/%{name}/artwork
-install -d %{buildroot}%{_datadir}/%{name}/chds
-install -d %{buildroot}%{_datadir}/%{name}/ctrlr
-install -d %{buildroot}%{_datadir}/%{name}/effects
-install -d %{buildroot}%{_datadir}/%{name}/fonts
-install -d %{buildroot}%{_datadir}/%{name}/keymaps
-install -d %{buildroot}%{_datadir}/%{name}/roms
-install -d %{buildroot}%{_datadir}/%{name}/samples
-install -d %{buildroot}%{_datadir}/%{name}/cheats
-install -d %{buildroot}%{_mandir}/man1
-install -d %{buildroot}%{_sysconfdir}/%{name}
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/cfg
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/comments
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/diff
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/ini
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/inp
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/memcard
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/nvram
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/snap
-install -d %{buildroot}%{_sysconfdir}/skel/.%{name}/sta
+install -d $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/chds
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/ctrlr
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/effects
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/fonts
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/cheats
+install -d $RPM_BUILD_ROOT%{_mandir}/man1
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/cfg
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/comments
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/diff
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/ini
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/inp
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/memcard
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/nvram
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/snap
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/sta
 
 # install binaries and config files
-install -pm 644 %{name}.ini %{buildroot}%{_sysconfdir}/%{name}
-install -pm 644 src/osd/sdl/keymaps/* %{buildroot}%{_datadir}/%{name}/keymaps
-#install -pm 644 ui.bdf %{SOURCE2} %{buildroot}%{_datadir}/%{name}/fonts
-%if %{with debug}
-install -pm 755 %{name}d %{buildroot}%{_bindir}
-%else
-install -pm 755 %{name} %{buildroot}%{_bindir}
+install -pm 644 %{name}.ini $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+%if %{with ldplayer}
+install -pm 755 ldplayer $RPM_BUILD_ROOT%{_bindir}
 %endif
-install -pm 755 chdman jedutil ldplayer ldresample ldverify \
-    romcmp testkeys unidasm %{buildroot}%{_bindir}
+%if %{with debug}
+install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}
+%else
+install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}
+%endif
+install -pm 755 chdman jedutil ldresample ldverify \
+    romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
 do
-install -pm 755 $tool %{buildroot}%{_bindir}/%{name}-$tool
+install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
 pushd src/osd/sdl/man
-install -pm 644 chdman.1 jedutil.1 ldplayer.1 ldverify.1 mame.1 romcmp.1 \
-    testkeys.1 %{buildroot}%{_mandir}/man1
+%if %{with ldplayer}
+install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
+%endif
+install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.1 romcmp.1 \
+    testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
 popd
 
 
 %clean
-rm -rf %{buildroot}
+rm -rf $RPM_BUILD_ROOT
 
 
 %files
@@ -223,19 +237,29 @@ rm -rf %{buildroot}
 %{_mandir}/man1/romcmp.1*
 %{_mandir}/man1/testkeys.1*
 
+%if %{with ldplayer}
 %files ldplayer
 %defattr(-,root,root,-)
 %{_bindir}/ldplayer
 %{_mandir}/man1/ldplayer.1*
+%endif
 
 
 %changelog
+* Mon Feb 28 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u3-1
+- Updated to 0.141u3
+- Filtered out redundant $RPM_OPT_FLAGS
+- No longer enable joystick by default
+- Provided an easy way to disable ldplayer
+- Dropped upstreamed gcc-4.6 patch
+
 * Wed Feb 09 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u2-1
 - Updated to 0.141u2
 
 * Mon Jan 24 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u1-1
 - Updated to 0.141u1
 - Re-enabled the fortify patch
+- Fixed building with gcc-4.6
 
 * Thu Jan 13 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141-1
 - Updated to 0.141
