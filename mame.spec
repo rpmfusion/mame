@@ -1,7 +1,7 @@
 # ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
 # if it does not build. The debug build is disabled by default, please use
 # --with debug to override
-%bcond_without ldplayer
+%bcond_with ldplayer
 %bcond_with debug
 
 %global baseversion 141
