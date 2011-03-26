@@ -1,11 +1,11 @@
 # ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
 # if it does not build. The debug build is disabled by default, please use
 # --with debug to override
-%bcond_with ldplayer
+%bcond_without ldplayer
 %bcond_with debug
 
 %global baseversion 141
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -26,7 +26,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -104,11 +104,12 @@ done
 cat > %{name}.ini << EOF
 # Define multi-user paths
 artpath            %{_datadir}/%{name}/artwork;%{_datadir}/%{name}/effects
+cheatpath          %{_datadir}/%{name}/cheats
 ctrlrpath          %{_datadir}/%{name}/ctrlr
 fontpath           %{_datadir}/%{name}/fonts
+hashpath           %{_datadir}/%{name}/hash
 rompath            %{_datadir}/%{name}/roms;%{_datadir}/%{name}/chds
 samplepath         %{_datadir}/%{name}/samples
-cheatpath          %{_datadir}/%{name}/cheats
 
 # Allow user to override ini settings
 inipath            \$HOME/.%{name}/ini;%{_sysconfdir}/%{name}
@@ -150,17 +151,6 @@ make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 
 rm -rf $RPM_BUILD_ROOT
 
 # create directories
-install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/chds
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/ctrlr
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/effects
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/fonts
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/cheats
-install -d $RPM_BUILD_ROOT%{_mandir}/man1
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/cfg
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/comments
@@ -171,10 +161,21 @@ install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/memcard
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/nvram
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/snap
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/sta
+install -d $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/chds
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/cheats
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/ctrlr
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/effects
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/fonts
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
+install -d $RPM_BUILD_ROOT%{_mandir}/man1
 
-# install binaries and config files
+# install files
 install -pm 644 %{name}.ini $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
-install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 %if %{with ldplayer}
 install -pm 755 ldplayer $RPM_BUILD_ROOT%{_bindir}
 %endif
@@ -190,6 +191,8 @@ for tool in regrep split src2html srcclean
 do
 install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
+install -pm 644 megatech.xml $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
+install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 pushd src/osd/sdl/man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
@@ -208,6 +211,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/* whatsnew*.txt
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
+%{_sysconfdir}/skel/.%{name}
 %if %{with debug}
 %{_bindir}/%{name}d
 %else
@@ -215,7 +219,6 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 %{_datadir}/%{name}
 %{_mandir}/man1/mame.1*
-%{_sysconfdir}/skel/.%{name}
 
 %files tools
 %defattr(-,root,root,-)
@@ -246,6 +249,12 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Mar 25 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u4-1
+- Updated to 0.141u4
+- Re-enabled ldplayer
+- Added support for hash files
+- Sorted the %%install section alphabetically
+
 * Mon Feb 28 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u3-1
 - Updated to 0.141u3
 - Filtered out redundant $RPM_OPT_FLAGS
