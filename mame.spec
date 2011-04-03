@@ -4,8 +4,8 @@
 %bcond_without ldplayer
 %bcond_with debug
 
-%global baseversion 141
-%global sourceupdate 4
+%global baseversion 142
+#global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -191,7 +191,7 @@ for tool in regrep split src2html srcclean
 do
 install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
-install -pm 644 megatech.xml $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
+install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
 install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 pushd src/osd/sdl/man
 %if %{with ldplayer}
@@ -249,6 +249,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Apr 03 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142-1
+- Updated to 0.142
+
 * Fri Mar 25 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.141u4-1
 - Updated to 0.141u4
 - Re-enabled ldplayer
