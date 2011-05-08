@@ -1,7 +1,7 @@
 # ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
 # if it does not build. The debug build is disabled by default, please use
 # --with debug to override
-%bcond_without ldplayer
+%bcond_with ldplayer
 %bcond_with debug
 
 %global baseversion 142
@@ -251,6 +251,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sun May 08 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142u3-1
 - Updated to 0.142u3
+- Disabled ldplayer
 
 * Mon Apr 25 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142u2-1
 - Updated to 0.142u2
