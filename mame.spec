@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 142
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -26,7 +26,7 @@ Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -249,6 +249,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue May 24 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142u4-1
+- Updated to 0.142u4
+
 * Sun May 08 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142u3-1
 - Updated to 0.142u3
 - Disabled ldplayer
