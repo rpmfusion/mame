@@ -4,8 +4,8 @@
 %bcond_with ldplayer
 %bcond_with debug
 
-%global baseversion 142
-%global sourceupdate 6
+%global baseversion 143
+#global sourceupdate 6
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -23,12 +23,12 @@ URL:            http://mamedev.org/
 Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -251,6 +251,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jun 29 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143-1
+- Updated to 0.143
+
 * Sun Jun 19 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.142u6-1
 - Updated to 0.142u6
 
