@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 143
-#global sourceupdate 6
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -23,7 +23,7 @@ URL:            http://mamedev.org/
 Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -251,6 +251,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Jul 15 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u1-1
+- Updated to 0.143u1
+
 * Wed Jun 29 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143-1
 - Updated to 0.143
 
