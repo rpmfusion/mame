@@ -31,7 +31,7 @@ Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-0143u5-stacksmash.patch
+Patch1:         %{name}-0.143u5-stacksmash.patch
 Patch2:         %{name}-verbosebuild.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
