@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 143
-%global sourceupdate 5
+%global sourceupdate 6
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -28,10 +28,9 @@ Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-0.143u5-stacksmash.patch
 Patch2:         %{name}-verbosebuild.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -101,7 +100,6 @@ while [ $i -le %{sourceupdate} ]; do
 done
 %endif
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .stacksmash
 %patch2 -p1 -b .verbosebuild
 
 # Create ini file
@@ -253,6 +251,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Sep 22 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u6-1
+- Updated to 0.143u6
+- Dropped upstreamed stacksmash patch
+
 * Tue Sep 06 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u5-1
 - Updated to 0.143u5
 - Fixed stack smash in m68kmake.c
