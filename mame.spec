@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 143
-%global sourceupdate 7
+%global sourceupdate 8
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -30,6 +30,7 @@ Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -252,6 +253,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Oct 23 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u8-1
+- Updated to 0.143u8
+
 * Tue Oct 11 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u7-1
 - Updated to 0.143u7
 
