@@ -4,8 +4,8 @@
 %bcond_with ldplayer
 %bcond_with debug
 
-%global baseversion 143
-%global sourceupdate 9
+%global baseversion 144
+#global sourceupdate 9
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -20,18 +20,18 @@ Group:          Applications/Emulators
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
 License:        MAME License
 URL:            http://mamedev.org/
-Source0:        http://www.aarongiles.com/mirror/releases/%{name}0%{baseversion}s.exe
+Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
-Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
-Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+#Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
+#Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
@@ -104,6 +104,9 @@ done
 %endif
 %patch0 -p1 -b .fortify
 %patch2 -p1 -b .verbosebuild
+
+#fix encoding
+iconv -f cp1252 -t utf-8 whatsnew.txt > whatsnew.txt.conv && mv -f whatsnew.txt.conv whatsnew.txt
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -254,6 +257,11 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 15 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144-1
+- Updated to 0.144
+- Fixed whatsnew.txt encoding (cp1252 → utf-8)
+- Updated Source0 URL
+
 * Thu Oct 27 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.143u9-1
 - Updated to 0.143u9
 
