@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-#global sourceupdate 9
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -23,7 +23,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -257,6 +257,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Sun Nov 27 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u1-1
+- Updated to 0.144u1
+
 * Tue Nov 15 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144-1
 - Updated to 0.144
 - Fixed whatsnew.txt encoding (cp1252 → utf-8)
