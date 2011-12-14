@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-%global sourceupdate 2
+%global sourceupdate 3
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -16,7 +16,6 @@ Version:        0.%{baseversion}
 Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
-Group:          Applications/Emulators
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
 License:        MAME License
 URL:            http://mamedev.org/
@@ -25,7 +24,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
@@ -35,7 +34,6 @@ Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  expat-devel
 BuildRequires:  GConf2-devel
@@ -210,12 +208,7 @@ install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.1 romcmp.1 \
 popd
 
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
-
 %files
-%defattr(-,root,root,-)
 %doc docs/* whatsnew*.txt
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
@@ -229,7 +222,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/mame.1*
 
 %files tools
-%defattr(-,root,root,-)
 %{_bindir}/chdman
 %{_bindir}/jedutil
 %{_bindir}/ldresample
@@ -250,13 +242,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with ldplayer}
 %files ldplayer
-%defattr(-,root,root,-)
 %{_bindir}/ldplayer
 %{_mandir}/man1/ldplayer.1*
 %endif
 
 
 %changelog
+* Wed Dec 14 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u3-1
+- Updated to 0.144u3
+- Dropped obsolete Group, Buildroot, %%clean and %%defattr
+
 * Sun Dec 04 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u2-1
 - Updated to 0.144u2
 
