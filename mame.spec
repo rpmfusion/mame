@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -25,7 +25,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
@@ -248,6 +248,9 @@ popd
 
 
 %changelog
+* Sun Dec 25 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u4-1
+- Updated to 0.144u4
+
 * Wed Dec 14 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u3-1
 - Updated to 0.144u3
 - Dropped obsolete Group, Buildroot, %%clean and %%defattr
