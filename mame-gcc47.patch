@@ -1,0 +1,64 @@
+diff -up mame-0.144u5/src/emu/video/polynew.h.gcc47 mame-0.144u5/src/emu/video/polynew.h
+--- mame-0.144u5/src/emu/video/polynew.h.gcc47	2012-01-10 14:30:31.704364582 +0100
++++ mame-0.144u5/src/emu/video/polynew.h	2012-01-10 14:30:34.672381892 +0100
+@@ -70,6 +70,24 @@
+ //  TYPE DEFINITIONS
+ //**************************************************************************
+ 
++//-------------------------------------------------
++//  global helpers for float base types
++//-------------------------------------------------
++
++inline float poly_floor(float x) { return floorf(x); }
++inline float poly_abs(float x) { return fabsf(x); }
++inline float poly_recip(float x) { return 1.0f / x; }
++
++
++//-------------------------------------------------
++//  global helpers for double base types
++//-------------------------------------------------
++
++inline double poly_floor(double x) { return floor(x); }
++inline double poly_abs(double x) { return fabs(x); }
++inline double poly_recip(double x) { return 1.0 / x; }
++
++
+ // poly_manager is a template class
+ template<typename _BaseType, class _ObjectData, int _MaxParams, int _MaxPolys>
+ class poly_manager
+@@ -254,24 +272,6 @@ private:
+ 
+ 
+ //-------------------------------------------------
+-//  global helpers for float base types
+-//-------------------------------------------------
+-
+-inline float poly_floor(float x) { return floorf(x); }
+-inline float poly_abs(float x) { return fabsf(x); }
+-inline float poly_recip(float x) { return 1.0f / x; }
+-
+-
+-//-------------------------------------------------
+-//  global helpers for double base types
+-//-------------------------------------------------
+-
+-inline double poly_floor(double x) { return floor(x); }
+-inline double poly_abs(double x) { return fabs(x); }
+-inline double poly_recip(double x) { return 1.0 / x; }
+-
+-
+-//-------------------------------------------------
+ //  poly_manager - constructor
+ //-------------------------------------------------
+ 
+diff -up mame-0.144u5/src/osd/sdl/sdlsocket.c.gcc47 mame-0.144u5/src/osd/sdl/sdlsocket.c
+--- mame-0.144u5/src/osd/sdl/sdlsocket.c.gcc47	2012-01-10 14:30:12.061249998 +0100
++++ mame-0.144u5/src/osd/sdl/sdlsocket.c	2012-01-10 14:30:34.672381892 +0100
+@@ -23,6 +23,7 @@
+ #endif
+ #include <errno.h>
+ 
++#define NO_MEM_TRACKING
+ #include "emu.h"
+ #include "sdlfile.h"
+ 

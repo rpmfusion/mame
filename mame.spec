@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-%global sourceupdate 4
+%global sourceupdate 5
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -26,13 +26,14 @@ Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
+Patch1:         %{name}-gcc47.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
@@ -101,6 +102,7 @@ while [ $i -le %{sourceupdate} ]; do
 done
 %endif
 %patch0 -p1 -b .fortify
+%patch1 -p1 -b .gcc47
 %patch2 -p1 -b .verbosebuild
 
 #fix encoding
@@ -248,6 +250,10 @@ popd
 
 
 %changelog
+* Tue Jan 10 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u5-1
+- Updated to 0.144u5
+- Fixed building with gcc-4.7
+
 * Sun Dec 25 2011 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u4-1
 - Updated to 0.144u4
 
