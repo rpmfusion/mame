@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-%global sourceupdate 5
+%global sourceupdate 6
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -27,7 +27,7 @@ Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
@@ -250,6 +250,9 @@ popd
 
 
 %changelog
+* Mon Jan 16 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u6-1
+- Updated to 0.144u6
+
 * Tue Jan 10 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u5-1
 - Updated to 0.144u5
 - Fixed building with gcc-4.7
