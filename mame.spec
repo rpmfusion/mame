@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 144
-%global sourceupdate 6
+%global sourceupdate 7
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -28,17 +28,19 @@ Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-gcc47.patch
+Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
+BuildRequires:  flac-devel
 BuildRequires:  GConf2-devel
 BuildRequires:  gtk2-devel
+# BuildRequires:  libjpeg-devel
 BuildRequires:  p7zip
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
@@ -102,7 +104,7 @@ while [ $i -le %{sourceupdate} ]; do
 done
 %endif
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .gcc47
+%patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
 
 #fix encoding
@@ -143,14 +145,17 @@ EOF
 RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
 
 %if %{with ldplayer}
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" TARGET=ldplayer
 %endif
 %if %{with debug}
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" DEBUG=1 all
 %else
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 SUFFIX64="" \
+make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 %endif
 
@@ -250,6 +255,11 @@ popd
 
 
 %changelog
+* Mon Jan 30 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u7-1
+- Updated to 0.144u7
+- Dropped upstreamed gcc-4.7 patch
+- Patched to use system libflac, libjpeg needs more work
+
 * Mon Jan 16 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u6-1
 - Updated to 0.144u6
 
