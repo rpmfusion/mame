@@ -4,8 +4,8 @@
 %bcond_with ldplayer
 %bcond_with debug
 
-%global baseversion 144
-%global sourceupdate 7
+%global baseversion 145
+#global sourceupdate 7
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,13 +22,13 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
@@ -106,9 +106,6 @@ done
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
-
-#fix encoding
-iconv -f cp1252 -t utf-8 whatsnew.txt > whatsnew.txt.conv && mv -f whatsnew.txt.conv whatsnew.txt
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -255,6 +252,10 @@ popd
 
 
 %changelog
+* Mon Feb 06 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145-1
+- Updated to 0.145
+- Updated the systemlibs patch
+
 * Mon Jan 30 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.144u7-1
 - Updated to 0.144u7
 - Dropped upstreamed gcc-4.7 patch
