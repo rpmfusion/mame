@@ -1,6 +1,6 @@
-diff -up mame-0.144u7/makefile.systemlibs mame-0.144u7/makefile
---- mame-0.144u7/makefile.systemlibs	2012-02-01 19:33:24.321723366 +0100
-+++ mame-0.144u7/makefile	2012-02-01 19:33:27.444741982 +0100
+diff -up mame-0.145/makefile.systemlibs mame-0.145/makefile
+--- mame-0.145/makefile.systemlibs	2012-02-06 02:05:28.087005745 +0100
++++ mame-0.145/makefile	2012-02-06 07:35:08.478866051 +0100
 @@ -211,6 +211,12 @@ BUILD_EXPAT = 1
  # uncomment next line to build zlib as part of MAME build
  BUILD_ZLIB = 1
@@ -57,19 +57,20 @@ diff -up mame-0.144u7/makefile.systemlibs mame-0.144u7/makefile
  #-------------------------------------------------
  # 'default' target needs to go here, before the 
  # include files which define additional targets
-@@ -639,8 +663,6 @@ default: maketree buildtools emulator
+@@ -639,9 +663,6 @@ default: maketree buildtools emulator
  
  all: default tools
  
--FLAC_LIB = $(OBJ)/libflac.a $(OBJ)/libflac++.a
+-FLAC_LIB = $(OBJ)/libflac.a 
+-# $(OBJ)/libflac++.a
 -
  
  #-------------------------------------------------
  # defines needed by multiple make files 
-diff -up mame-0.144u7/src/emu/sound/samples.c.systemlibs mame-0.144u7/src/emu/sound/samples.c
---- mame-0.144u7/src/emu/sound/samples.c.systemlibs	2012-02-01 19:33:24.436724052 +0100
-+++ mame-0.144u7/src/emu/sound/samples.c	2012-02-01 19:33:25.185728517 +0100
-@@ -1,7 +1,11 @@
+diff -up mame-0.145/src/emu/sound/samples.c.systemlibs mame-0.145/src/emu/sound/samples.c
+--- mame-0.145/src/emu/sound/samples.c.systemlibs	2012-02-06 02:05:39.105092912 +0100
++++ mame-0.145/src/emu/sound/samples.c	2012-02-06 02:06:02.576278597 +0100
+@@ -16,7 +16,11 @@
  #include "emu.h"
  #include "emuopts.h"
  #include "samples.h"
@@ -82,9 +83,9 @@ diff -up mame-0.144u7/src/emu/sound/samples.c.systemlibs mame-0.144u7/src/emu/so
  
  typedef struct _sample_channel sample_channel;
  struct _sample_channel
-diff -up mame-0.144u7/src/lib/util/chd.c.systemlibs mame-0.144u7/src/lib/util/chd.c
---- mame-0.144u7/src/lib/util/chd.c.systemlibs	2012-02-01 19:33:24.573724868 +0100
-+++ mame-0.144u7/src/lib/util/chd.c	2012-02-01 19:33:25.187728529 +0100
+diff -up mame-0.145/src/lib/util/chd.c.systemlibs mame-0.145/src/lib/util/chd.c
+--- mame-0.145/src/lib/util/chd.c.systemlibs	2012-02-06 02:05:28.422008396 +0100
++++ mame-0.145/src/lib/util/chd.c	2012-02-06 02:06:02.578278613 +0100
 @@ -48,7 +48,11 @@
  #include <stdlib.h>
  #include <new>
@@ -98,9 +99,9 @@ diff -up mame-0.144u7/src/lib/util/chd.c.systemlibs mame-0.144u7/src/lib/util/ch
  
  
  /***************************************************************************
-diff -up mame-0.144u7/src/mame/drivers/sliver.c.systemlibs mame-0.144u7/src/mame/drivers/sliver.c
---- mame-0.144u7/src/mame/drivers/sliver.c.systemlibs	2012-02-01 19:33:24.785726133 +0100
-+++ mame-0.144u7/src/mame/drivers/sliver.c	2012-02-01 19:33:25.189728541 +0100
+diff -up mame-0.145/src/mame/drivers/sliver.c.systemlibs mame-0.145/src/mame/drivers/sliver.c
+--- mame-0.145/src/mame/drivers/sliver.c.systemlibs	2012-02-06 02:05:53.837209459 +0100
++++ mame-0.145/src/mame/drivers/sliver.c	2012-02-06 02:06:02.580278628 +0100
 @@ -67,7 +67,7 @@ Notes:
  #include "sound/okim6295.h"
  #include "cpu/mcs51/mcs51.h"
