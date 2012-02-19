@@ -1,6 +1,6 @@
-diff -up mame-0.145/makefile.systemlibs mame-0.145/makefile
---- mame-0.145/makefile.systemlibs	2012-02-06 02:05:28.087005745 +0100
-+++ mame-0.145/makefile	2012-02-06 07:35:08.478866051 +0100
+diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
+--- mame-0.145u1/makefile.systemlibs	2012-02-19 18:50:05.671231564 +0100
++++ mame-0.145u1/makefile	2012-02-19 18:50:06.439236391 +0100
 @@ -211,6 +211,12 @@ BUILD_EXPAT = 1
  # uncomment next line to build zlib as part of MAME build
  BUILD_ZLIB = 1
@@ -65,31 +65,15 @@ diff -up mame-0.145/makefile.systemlibs mame-0.145/makefile
 -# $(OBJ)/libflac++.a
 -
  
- #-------------------------------------------------
- # defines needed by multiple make files 
-diff -up mame-0.145/src/emu/sound/samples.c.systemlibs mame-0.145/src/emu/sound/samples.c
---- mame-0.145/src/emu/sound/samples.c.systemlibs	2012-02-06 02:05:39.105092912 +0100
-+++ mame-0.145/src/emu/sound/samples.c	2012-02-06 02:06:02.576278597 +0100
-@@ -16,7 +16,11 @@
- #include "emu.h"
- #include "emuopts.h"
- #include "samples.h"
--#include "../../lib/libflac/include/flac/all.h"
-+#ifdef FLAC__NO_DLL
-+#include <flac/all.h>
-+#else
-+#include <FLAC/all.h>
-+#endif /* FLAC__NO_DLL */
+ 7Z_LIB = $(OBJ)/lib7z.a 
  
- typedef struct _sample_channel sample_channel;
- struct _sample_channel
-diff -up mame-0.145/src/lib/util/chd.c.systemlibs mame-0.145/src/lib/util/chd.c
---- mame-0.145/src/lib/util/chd.c.systemlibs	2012-02-06 02:05:28.422008396 +0100
-+++ mame-0.145/src/lib/util/chd.c	2012-02-06 02:06:02.578278613 +0100
-@@ -48,7 +48,11 @@
- #include <stdlib.h>
- #include <new>
+diff -up mame-0.145u1/src/lib/util/flac.h.systemlibs mame-0.145u1/src/lib/util/flac.h
+--- mame-0.145u1/src/lib/util/flac.h.systemlibs	2012-02-19 18:50:06.082234146 +0100
++++ mame-0.145u1/src/lib/util/flac.h	2012-02-19 18:50:06.440236397 +0100
+@@ -44,7 +44,11 @@
  
+ #include "osdcore.h"
+ #include "corefile.h"
 -#include "../../lib/libflac/include/flac/all.h"
 +#ifdef FLAC__NO_DLL
 +#include <flac/all.h>
@@ -98,10 +82,10 @@ diff -up mame-0.145/src/lib/util/chd.c.systemlibs mame-0.145/src/lib/util/chd.c
 +#endif /* FLAC__NO_DLL */
  
  
- /***************************************************************************
-diff -up mame-0.145/src/mame/drivers/sliver.c.systemlibs mame-0.145/src/mame/drivers/sliver.c
---- mame-0.145/src/mame/drivers/sliver.c.systemlibs	2012-02-06 02:05:53.837209459 +0100
-+++ mame-0.145/src/mame/drivers/sliver.c	2012-02-06 02:06:02.580278628 +0100
+ //**************************************************************************
+diff -up mame-0.145u1/src/mame/drivers/sliver.c.systemlibs mame-0.145u1/src/mame/drivers/sliver.c
+--- mame-0.145u1/src/mame/drivers/sliver.c.systemlibs	2012-02-19 18:49:57.477180052 +0100
++++ mame-0.145u1/src/mame/drivers/sliver.c	2012-02-19 18:50:06.441236403 +0100
 @@ -67,7 +67,7 @@ Notes:
  #include "sound/okim6295.h"
  #include "cpu/mcs51/mcs51.h"

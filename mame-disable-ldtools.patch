@@ -1,0 +1,45 @@
+diff -up mame-0.145u1/src/tools/tools.mak.disable-ldtools mame-0.145u1/src/tools/tools.mak
+--- mame-0.145u1/src/tools/tools.mak.disable-ldtools	2012-02-19 19:36:31.466241947 +0100
++++ mame-0.145u1/src/tools/tools.mak	2012-02-19 20:25:29.340015401 +0100
+@@ -55,8 +55,6 @@ TOOLS += \
+ 	chdman$(EXE) \
+ 	jedutil$(EXE) \
+ 	unidasm$(EXE) \
+-	ldresample$(EXE) \
+-	ldverify$(EXE) \
+ 	regrep$(EXE) \
+ 	srcclean$(EXE) \
+ 	src2html$(EXE) \
+@@ -117,32 +115,6 @@ unidasm$(EXE): $(UNIDASMOBJS) $(LIBDASM)
+ 
+ 
+ 
+-#-------------------------------------------------
+-# ldresample
+-#-------------------------------------------------
+-
+-LDRESAMPLEOBJS = \
+-	$(TOOLSOBJ)/ldresample.o \
+-
+-ldresample$(EXE): $(LDRESAMPLEOBJS) $(LIBUTIL) $(LIBOCORE) $(ZLIB) $(FLAC_LIB) $(EXPAT)
+-	@echo Linking $@...
+-	$(LD) $(LDFLAGS) $^ $(LIBS) $(FLAC_LIB) -o $@
+-
+-
+-
+-#-------------------------------------------------
+-# ldverify
+-#-------------------------------------------------
+-
+-LDVERIFYOBJS = \
+-	$(TOOLSOBJ)/ldverify.o \
+-
+-ldverify$(EXE): $(LDVERIFYOBJS) $(LIBUTIL) $(LIBOCORE) $(ZLIB) $(FLAC_LIB) $(EXPAT)
+-	@echo Linking $@...
+-	$(LD) $(LDFLAGS) $^ $(LIBS) $(FLAC_LIB) -o $@
+-
+-
+-
+ #-------------------------------------------------
+ # regrep
+ #-------------------------------------------------
