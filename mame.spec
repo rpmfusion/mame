@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-#global sourceupdate 7
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,7 +22,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -35,6 +35,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
+Patch3:         %{name}-disable-ldtools.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -46,6 +47,8 @@ BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 
 Provides:       sdlmame = 0%{baseversion}-%{release}
+Provides:       bundled(libjpeg) = 8c
+Provides:       bundled(lzma-sdk) = 9.22
 Obsoletes:      sdlmame < 0136-2
 
 %description
@@ -95,7 +98,7 @@ Obsoletes:      sdlmame-ldplayer < 0136-2
 for sourcefile in %{sources}; do
     7za x $sourcefile
 done
-find . -type f -not -name uismall.png -exec sed -i 's/\r//' {} \;
+find . -type f -not -name *.png -exec sed -i 's/\r//' {} \;
 %if 0%{?sourceupdate}
 i=1
 while [ $i -le %{sourceupdate} ]; do
@@ -106,6 +109,7 @@ done
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
+%patch3 -p1 -b .disable-ldtools
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -143,13 +147,13 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
 
 %if %{with ldplayer}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" TARGET=ldplayer
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" TARGET=ldplayer \
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'"
 %endif
 %if %{with debug}
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" DEBUG=1 all
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" DEBUG=1 \
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 %else
 make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
     BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
@@ -179,6 +183,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/ctrlr
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/effects
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/fonts
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
@@ -194,14 +199,17 @@ install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}
 %else
 install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}
 %endif
-install -pm 755 chdman jedutil ldresample ldverify \
+#install -pm 755 chdman jedutil ldresample ldverify \
+install -pm 755 chdman jedutil \
     romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
 do
 install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
+install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
+install -pm 644 hlsl/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
 install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 pushd src/osd/sdl/man
 %if %{with ldplayer}
@@ -228,8 +236,8 @@ popd
 %files tools
 %{_bindir}/chdman
 %{_bindir}/jedutil
-%{_bindir}/ldresample
-%{_bindir}/ldverify
+#%{_bindir}/ldresample
+#%{_bindir}/ldverify
 %{_bindir}/%{name}-regrep
 %{_bindir}/romcmp
 #%{_bindir}/%{name}-runtest
@@ -252,6 +260,13 @@ popd
 
 
 %changelog
+* Sun Feb 19 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u1-1
+- Updated to 0.145u1
+- Added artwork/* and hlsl/* to the installed files
+- Fixed the line ending fix to spare all the *.png files
+- Added bundled(libjpeg) and bundled(lzma-sdk) Provides
+- Temporarily disabled ldresample and ldverify
+
 * Mon Feb 06 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145-1
 - Updated to 0.145
 - Updated the systemlibs patch
