@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-%global sourceupdate 1
+%global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -23,7 +23,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
@@ -35,7 +35,6 @@ Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
-Patch3:         %{name}-disable-ldtools.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -109,7 +108,6 @@ done
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
-%patch3 -p1 -b .disable-ldtools
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -199,8 +197,7 @@ install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}
 %else
 install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}
 %endif
-#install -pm 755 chdman jedutil ldresample ldverify \
-install -pm 755 chdman jedutil \
+install -pm 755 chdman jedutil ldresample ldverify \
     romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
@@ -236,8 +233,8 @@ popd
 %files tools
 %{_bindir}/chdman
 %{_bindir}/jedutil
-#%{_bindir}/ldresample
-#%{_bindir}/ldverify
+%{_bindir}/ldresample
+%{_bindir}/ldverify
 %{_bindir}/%{name}-regrep
 %{_bindir}/romcmp
 #%{_bindir}/%{name}-runtest
@@ -260,6 +257,10 @@ popd
 
 
 %changelog
+* Sun Feb 26 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u2-1
+- Updated to 0.145u2
+- Re-enabled ldresample and ldverify
+
 * Sun Feb 19 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u1-1
 - Updated to 0.145u1
 - Added artwork/* and hlsl/* to the installed files
