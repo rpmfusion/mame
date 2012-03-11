@@ -1,6 +1,6 @@
-diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
---- mame-0.145u1/makefile.systemlibs	2012-02-19 18:50:05.671231564 +0100
-+++ mame-0.145u1/makefile	2012-02-19 18:50:06.439236391 +0100
+diff -up mame-0.145u4/makefile.systemlibs mame-0.145u4/makefile
+--- mame-0.145u4/makefile.systemlibs	2012-03-11 19:54:25.276698074 +0100
++++ mame-0.145u4/makefile	2012-03-11 19:54:25.905706616 +0100
 @@ -211,6 +211,12 @@ BUILD_EXPAT = 1
  # uncomment next line to build zlib as part of MAME build
  BUILD_ZLIB = 1
@@ -24,7 +24,7 @@ diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
  
  
  
-@@ -622,14 +630,30 @@ LIBS += -lz
+@@ -620,14 +628,30 @@ LIBS += -lz
  ZLIB =
  endif
  
@@ -40,9 +40,9 @@ diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
 +# add flac library
 +ifeq ($(BUILD_FLAC),1)
 +INCPATH += -I$(SRC)/lib/libflac/include
-+FLAC_LIB = $(OBJ)/libflac.a $(OBJ)/libflac++.a
++FLAC_LIB = $(OBJ)/libflac.a
 +else
-+LIBS += -lFLAC -lFLAC++
++LIBS += -lFLAC
 +FLAC_LIB =
 +endif
 +
@@ -57,7 +57,7 @@ diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
  #-------------------------------------------------
  # 'default' target needs to go here, before the 
  # include files which define additional targets
-@@ -639,9 +663,6 @@ default: maketree buildtools emulator
+@@ -637,9 +661,6 @@ default: maketree buildtools emulator
  
  all: default tools
  
@@ -67,9 +67,9 @@ diff -up mame-0.145u1/makefile.systemlibs mame-0.145u1/makefile
  
  7Z_LIB = $(OBJ)/lib7z.a 
  
-diff -up mame-0.145u1/src/lib/util/flac.h.systemlibs mame-0.145u1/src/lib/util/flac.h
---- mame-0.145u1/src/lib/util/flac.h.systemlibs	2012-02-19 18:50:06.082234146 +0100
-+++ mame-0.145u1/src/lib/util/flac.h	2012-02-19 18:50:06.440236397 +0100
+diff -up mame-0.145u4/src/lib/util/flac.h.systemlibs mame-0.145u4/src/lib/util/flac.h
+--- mame-0.145u4/src/lib/util/flac.h.systemlibs	2012-03-11 19:54:24.935693445 +0100
++++ mame-0.145u4/src/lib/util/flac.h	2012-03-11 19:54:25.905706616 +0100
 @@ -44,7 +44,11 @@
  
  #include "osdcore.h"
@@ -83,9 +83,9 @@ diff -up mame-0.145u1/src/lib/util/flac.h.systemlibs mame-0.145u1/src/lib/util/f
  
  
  //**************************************************************************
-diff -up mame-0.145u1/src/mame/drivers/sliver.c.systemlibs mame-0.145u1/src/mame/drivers/sliver.c
---- mame-0.145u1/src/mame/drivers/sliver.c.systemlibs	2012-02-19 18:49:57.477180052 +0100
-+++ mame-0.145u1/src/mame/drivers/sliver.c	2012-02-19 18:50:06.441236403 +0100
+diff -up mame-0.145u4/src/mame/drivers/sliver.c.systemlibs mame-0.145u4/src/mame/drivers/sliver.c
+--- mame-0.145u4/src/mame/drivers/sliver.c.systemlibs	2012-03-11 19:54:16.440578020 +0100
++++ mame-0.145u4/src/mame/drivers/sliver.c	2012-03-11 19:54:25.906706630 +0100
 @@ -67,7 +67,7 @@ Notes:
  #include "sound/okim6295.h"
  #include "cpu/mcs51/mcs51.h"
