@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-%global sourceupdate 3
+%global sourceupdate 4
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -25,7 +25,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
@@ -35,6 +35,7 @@ Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
+Patch3:         %{name}-tms57002-unidasm.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -108,6 +109,8 @@ done
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
+%patch3 -p1 -b .tms57002-unidasm
+
 
 # Create ini file
 cat > %{name}.ini << EOF
@@ -257,6 +260,10 @@ popd
 
 
 %changelog
+* Sun Mar 11 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u4-1
+- Updated to 0.145u4
+- Updated the systemlibs patch (FLAC++ was removed)
+
 * Mon Feb 27 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u3-1
 - Updated to 0.145u3
 
