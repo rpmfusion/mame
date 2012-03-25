@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-%global sourceupdate 4
+%global sourceupdate 5
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -26,7 +26,7 @@ Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
@@ -35,7 +35,6 @@ Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
-Patch3:         %{name}-tms57002-unidasm.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -109,7 +108,6 @@ done
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
-%patch3 -p1 -b .tms57002-unidasm
 
 
 # Create ini file
@@ -215,7 +213,7 @@ pushd src/osd/sdl/man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
-install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.1 romcmp.1 \
+install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.6 romcmp.1 \
     testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
 popd
 
@@ -231,7 +229,7 @@ popd
 %{_bindir}/%{name}
 %endif
 %{_datadir}/%{name}
-%{_mandir}/man1/mame.1*
+%{_mandir}/man1/mame.6*
 
 %files tools
 %{_bindir}/chdman
@@ -260,6 +258,10 @@ popd
 
 
 %changelog
+* Sun Mar 25 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u5-1
+- Updated to 0.145u5
+- mame.1 → mame.6
+
 * Sun Mar 11 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u4-1
 - Updated to 0.145u4
 - Updated the systemlibs patch (FLAC++ was removed)
