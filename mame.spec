@@ -27,7 +27,7 @@ Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
