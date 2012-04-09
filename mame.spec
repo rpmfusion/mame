@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-%global sourceupdate 5
+%global sourceupdate 6
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -27,13 +27,12 @@ Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
@@ -106,7 +105,6 @@ while [ $i -le %{sourceupdate} ]; do
 done
 %endif
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
 
 
@@ -258,6 +256,10 @@ popd
 
 
 %changelog
+* Sun Apr 08 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u6-1
+- Updated to 0.154u6
+- Dropped the systemlibs patch (no longer necessary)
+
 * Sun Mar 25 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u5-1
 - Updated to 0.145u5
 - mame.1 → mame.6
