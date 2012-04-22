@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 145
-%global sourceupdate 6
+%global sourceupdate 7
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -28,7 +28,7 @@ Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
@@ -256,6 +256,9 @@ popd
 
 
 %changelog
+* Sun Apr 22 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u7-1
+- Updated to 0.145u7
+
 * Sun Apr 08 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u6-1
 - Updated to 0.154u6
 - Dropped the systemlibs patch (no longer necessary)
