@@ -4,8 +4,8 @@
 %bcond_with ldplayer
 %bcond_with debug
 
-%global baseversion 145
-%global sourceupdate 8
+%global baseversion 146
+#global sourceupdate 8
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,14 +22,14 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
-Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
+#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
+#Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 Patch0:         %{name}-fortify.patch
@@ -184,6 +184,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
 
 # install files
@@ -207,6 +208,7 @@ install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
 install -pm 644 hlsl/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
 install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+install -pm 644 src/osd/sdl/shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
 pushd src/osd/sdl/man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
@@ -256,6 +258,10 @@ popd
 
 
 %changelog
+* Tue May 22 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146-1
+- Updated to 0.146
+- Added GLSL shaders to the installed files
+
 * Mon May 07 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.145u8-1
 - Updated to 0.145u8
 
