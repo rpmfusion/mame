@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 146
-#global sourceupdate 8
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -22,7 +22,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -258,6 +258,9 @@ popd
 
 
 %changelog
+* Mon Jun 11 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146u1-1
+- Updated to 0.146u1
+
 * Tue May 22 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146-1
 - Updated to 0.146
 - Added GLSL shaders to the installed files
