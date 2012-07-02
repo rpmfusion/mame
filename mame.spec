@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 146
-%global sourceupdate 1
+%global sourceupdate 2
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -23,7 +23,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
@@ -258,6 +258,9 @@ popd
 
 
 %changelog
+* Mon Jul 02 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146u2-1
+- Updated to 0.146u2
+
 * Mon Jun 11 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146u1-1
 - Updated to 0.146u1
 
