@@ -1,11 +1,11 @@
 # ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
 # if it does not build. The debug build is disabled by default, please use
 # --with debug to override
-%bcond_with ldplayer
+%bcond_without ldplayer
 %bcond_with debug
 
-%global baseversion 146
-%global sourceupdate 5
+%global baseversion 147
+%global sourceupdate 0
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -20,13 +20,15 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
+#Get from http://mamedev.org/releases/whatsnew_0%{baseversion}.txt and compress
+Source100:      whatsnew_0%{baseversion}.zip
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
@@ -43,11 +45,10 @@ BuildRequires:  gtk2-devel
 BuildRequires:  p7zip
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
+Requires:       %{name}-data = %{version}-%{release}
 
-Provides:       sdlmame = 0%{baseversion}-%{release}
 Provides:       bundled(libjpeg) = 8c
 Provides:       bundled(lzma-sdk) = 9.22
-Obsoletes:      sdlmame < 0136-2
 
 %description
 MAME stands for Multiple Arcade Machine Emulator.  When used in conjunction
@@ -68,12 +69,8 @@ a nice side-effect, which doesn't happen all the time.  MAME strives for
 emulating the games faithfully.
 
 %package tools
-Summary:        Tools used for the MAME package
-Group:          Applications/Emulators
+Summary:        Additional tools for MAME
 Requires:       %{name} = %{version}-%{release}
-
-Provides:       sdlmame-tools = 0%{baseversion}-%{release}
-Obsoletes:      sdlmame-tools < 0136-2
 
 %description tools
 %{summary}.
@@ -81,18 +78,60 @@ Obsoletes:      sdlmame-tools < 0136-2
 %if %{with ldplayer}
 %package ldplayer
 Summary:        Standalone laserdisc player based on MAME
-Group:          Applications/Emulators
-
-Provides:       sdlmame-ldplayer = 0%{baseversion}-%{release}
-Obsoletes:      sdlmame-ldplayer < 0136-2
 
 %description ldplayer
 %{summary}.
 %endif
 
+%package -n mess
+Summary:        Multi Emulator Super System
+Requires:       mess-data = %{version}-%{release}
+
+Provides:       bundled(libjpeg) = 8c
+Provides:       bundled(lzma-sdk) = 9.22
+
+%description -n mess
+MESS is an acronym that stands for Multi Emulator Super System. MESS will
+more or less faithfully reproduce computer and console systems on a PC.
+
+MESS emulates the hardware of the systems and sometimes utilizes ROM images to
+load programs and games.  Therefore, these systems are NOT simulations, but
+the actual emulations of the hardware.
+
+%package -n mess-tools
+Summary:        Additional tools for MESS
+Requires:       mess = %{version}-%{release}
+
+%description -n mess-tools
+%{summary}.
+
+%package data
+Summary:        Data files used by both MAME and MESS
+
+Provides:       mess-data = %{version}-%{release}
+
+BuildArch:      noarch
+
+%description data
+%{summary}.
+
+%package data-software-lists
+Summary:        Software lists used by both MAME and MESS
+Requires:       %{name}-data = %{version}-%{release}
+
+Provides:       mess-data-software-lists = %{version}-%{release}
+Obsoletes:      mess-data < 0.146-2
+
+BuildArch:      noarch
+
+%description data-software-lists
+%{summary}. These are split from the main -data subpackage due to relatively
+large size.
+
 
 %prep
 %setup -qcT
+install -pm 644 %{SOURCE100} .
 for sourcefile in %{sources}; do
     7za x $sourcefile
 done
@@ -108,7 +147,7 @@ done
 %patch2 -p1 -b .verbosebuild
 
 
-# Create ini file
+# Create ini files
 cat > %{name}.ini << EOF
 # Define multi-user paths
 artpath            %{_datadir}/%{name}/artwork;%{_datadir}/%{name}/effects
@@ -137,24 +176,35 @@ video              opengl
 autosave           1
 EOF
 
+#make a copy for MESS
+cp %{name}.ini mess.ini
+sed -i 's/%{name}/mess/' mess.ini
+
 
 %build
 #these flags are already included in the Makefile
 RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
 
+#save some space
+MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
+    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="
+
 %if %{with ldplayer}
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" TARGET=ldplayer \
+make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'"
 %endif
 %if %{with debug}
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" DEBUG=1 \
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %else
-make %{?_smp_mflags} NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="" \
+make %{?_smp_mflags} $MAME_FLAGS \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+
+make %{?_smp_mflags} $MAME_FLAGS TARGET=mess\
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %endif
 
 
@@ -163,63 +213,75 @@ rm -rf $RPM_BUILD_ROOT
 
 # create directories
 install -d $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/cfg
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/comments
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/diff
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/ini
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/inp
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/memcard
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/nvram
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/snap
-install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/sta
+install -d $RPM_BUILD_ROOT%{_sysconfdir}/mess
+for folder in cfg comments diff ini inp memcard nvram snap sta
+do
+    install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/$folder
+    install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.mess/$folder
+done
 install -d $RPM_BUILD_ROOT%{_bindir}
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/chds
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/cheats
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/ctrlr
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/effects
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/fonts
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/roms
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/samples
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
+for folder in artwork chds cheats ctrlr effects fonts hash hlsl keymaps roms \
+    samples shader
+do
+    install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/$folder
+done
+for folder in artwork chds cheats ctrlr effects fonts hash hlsl keymaps roms \
+    samples shader software
+do
+    install -d $RPM_BUILD_ROOT%{_datadir}/mess/$folder
+done
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
+install -d $RPM_BUILD_ROOT%{_mandir}/man6
 
 # install files
 install -pm 644 %{name}.ini $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+install -pm 644 mess.ini $RPM_BUILD_ROOT%{_sysconfdir}/mess
 %if %{with ldplayer}
 install -pm 755 ldplayer $RPM_BUILD_ROOT%{_bindir}
 %endif
 %if %{with debug}
 install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}
+install -pm 755 messd $RPM_BUILD_ROOT%{_bindir}
 %else
 install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}
+install -pm 755 mess $RPM_BUILD_ROOT%{_bindir}
 %endif
-install -pm 755 chdman jedutil ldresample ldverify \
-    romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
+install -pm 755 chdman jedutil ldresample ldverify romcmp testkeys unidasm \
+    castool floptool imgtool $RPM_BUILD_ROOT%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
 do
-install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
+    install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
 install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
 install -pm 644 hlsl/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
-install -pm 644 src/osd/sdl/keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
-install -pm 644 src/osd/sdl/shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
-pushd src/osd/sdl/man
+install -pm 644 keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+pushd src/osd/sdl
+install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
+for folder in artwork hash hlsl keymaps shader
+do
+    pushd $RPM_BUILD_ROOT%{_datadir}/%{name}/$folder
+    for i in *
+    do
+        ln -s ../../%{name}/$folder/$i ../../mess/$folder/$i
+    done
+    popd
+done
+pushd man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
-install -pm 644 chdman.1 jedutil.1 ldverify.1 mame.6 romcmp.1 \
-    testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install -pm 644 chdman.1 jedutil.1 ldverify.1 romcmp.1 testkeys.1 \
+    $RPM_BUILD_ROOT%{_mandir}/man1
+install -pm 644 mame.6 $RPM_BUILD_ROOT%{_mandir}/man6
+popd
 popd
 
 
 %files
-%doc docs/* whatsnew*.txt
+%doc docs/config.txt docs/hlsl.txt docs/license.txt docs/mame.txt
+%doc docs/newvideo.txt docs/nscsi.txt whatsnew*.txt
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/skel/.%{name}
@@ -228,8 +290,7 @@ popd
 %else
 %{_bindir}/%{name}
 %endif
-%{_datadir}/%{name}
-%{_mandir}/man1/mame.6*
+%{_mandir}/man6/mame.6*
 
 %files tools
 %{_bindir}/chdman
@@ -256,8 +317,43 @@ popd
 %{_mandir}/man1/ldplayer.1*
 %endif
 
+%files -n mess
+%config(noreplace) %{_sysconfdir}/mess/mess.ini
+%dir %{_sysconfdir}/mess
+%{_sysconfdir}/skel/.mess
+%if %{with debug}
+%{_bindir}/messd
+%else
+%{_bindir}/mess
+%endif
+
+%files -n mess-tools
+%doc docs/imgtool.txt
+%{_bindir}/castool
+%{_bindir}/floptool
+%{_bindir}/imgtool
+
+%files data
+%{_datadir}/%{name}
+%exclude %{_datadir}/%{name}/hash/*
+%{_datadir}/mess
+%exclude %{_datadir}/mess/hash/*
+
+%files data-software-lists
+%{_datadir}/%{name}/hash/*
+%{_datadir}/mess/hash/*
+
 
 %changelog
+* Fri Sep 21 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147-1
+- Updated to 0.147
+- Merged with mess
+- Streamlined the directories installation
+- Worked around missing whatsnew.txt
+- Fixed mame.6 installation location
+- Re-enabled ldplayer
+- Cleaned-up ancient Obsoletes/Provides
+
 * Mon Aug 20 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146u5-1
 - Updated to 0.146u5
 
