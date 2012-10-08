@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 147
-%global sourceupdate 0
+%global sourceupdate 1
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -20,11 +20,9 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
-#Get from http://mamedev.org/releases/whatsnew_0%{baseversion}.txt and compress
-Source100:      whatsnew_0%{baseversion}.zip
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -131,10 +129,10 @@ large size.
 
 %prep
 %setup -qcT
-install -pm 644 %{SOURCE100} .
 for sourcefile in %{sources}; do
     7za x $sourcefile
 done
+sed -i '2157d' src/mess/mess.mak
 find . -type f -not -name *.png -exec sed -i 's/\r//' {} \;
 %if 0%{?sourceupdate}
 i=1
@@ -318,6 +316,7 @@ popd
 %endif
 
 %files -n mess
+%doc messnew*.txt
 %config(noreplace) %{_sysconfdir}/mess/mess.ini
 %dir %{_sysconfdir}/mess
 %{_sysconfdir}/skel/.mess
@@ -345,6 +344,10 @@ popd
 
 
 %changelog
+* Mon Oct 08 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-1
+- Updated to 0.147u1
+- Dropped missing whatsnew.txt workaround
+
 * Fri Sep 21 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147-1
 - Updated to 0.147
 - Merged with mess
