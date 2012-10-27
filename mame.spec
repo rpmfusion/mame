@@ -7,13 +7,16 @@
 %global baseversion 147
 %global sourceupdate 1
 
+#work around low memory on the RPM Fusion builder
+%global optflags %{optflags} -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+
 Name:           mame
 %if 0%{?sourceupdate}
 Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
@@ -175,8 +178,7 @@ autosave           1
 EOF
 
 #make a copy for MESS
-cp %{name}.ini mess.ini
-sed -i 's/%{name}/mess/' mess.ini
+sed 's/%{name}/mess/g' %{name}.ini > mess.ini
 
 
 %build
@@ -194,12 +196,14 @@ make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
 %if %{with debug}
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+rm -rf obj
 
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %else
 make %{?_smp_mflags} $MAME_FLAGS \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+rm -rf obj
 
 make %{?_smp_mflags} $MAME_FLAGS TARGET=mess\
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
@@ -344,9 +348,14 @@ popd
 
 
 %changelog
+* Sat Oct 27 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-2
+- Work around low memory on the RPM Fusion builder
+
 * Mon Oct 08 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-1
 - Updated to 0.147u1
 - Dropped missing whatsnew.txt workaround
+- Fixed incorrect paths in mess.ini
+- Remove the object tree between mame and mess builds to prevent mess using /etc/mame
 
 * Fri Sep 21 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147-1
 - Updated to 0.147
