@@ -335,7 +335,7 @@ popd
 %endif
 
 %files -n mess
-%doc messnew*.txt
+#doc messnew*.txt
 %config(noreplace) %{_sysconfdir}/mess/mess.ini
 %dir %{_sysconfdir}/mess
 %{_sysconfdir}/skel/.mess
