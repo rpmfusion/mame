@@ -5,10 +5,13 @@
 %bcond_with debug
 
 %global baseversion 147
-%global sourceupdate 1
+%global sourceupdate 2
 
-#work around low memory on the RPM Fusion builder
+# work around low memory on the RPM Fusion builder
+%bcond_without lowmem
+%if %{with lowmem}
 %global optflags %{optflags} -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+%endif
 
 Name:           mame
 %if 0%{?sourceupdate}
@@ -16,7 +19,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
@@ -26,7 +29,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
@@ -42,13 +45,17 @@ BuildRequires:  expat-devel
 BuildRequires:  flac-devel
 BuildRequires:  GConf2-devel
 BuildRequires:  gtk2-devel
-# BuildRequires:  libjpeg-devel
+%if 0%{?fedora} >= 19
+BuildRequires:  libjpeg-devel
+%endif
 BuildRequires:  p7zip
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
+%if 0%{?fedora} < 19
 Provides:       bundled(libjpeg) = 8c
+%endif
 Provides:       bundled(lzma-sdk) = 9.22
 
 %description
@@ -88,7 +95,9 @@ Summary:        Standalone laserdisc player based on MAME
 Summary:        Multi Emulator Super System
 Requires:       mess-data = %{version}-%{release}
 
+%if 0%{?fedora} < 19
 Provides:       bundled(libjpeg) = 8c
+%endif
 Provides:       bundled(lzma-sdk) = 9.22
 
 %description -n mess
@@ -187,7 +196,13 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
 
 #save some space
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_JPEG=1 BUILD_FLAC=0 SUFFIX64="
+    BUILD_FLAC=0 SUFFIX64="
+
+%if 0%{?fedora} >= 19
+MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=0"
+%else
+MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=1"
+%endif
 
 %if %{with ldplayer}
 make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
@@ -196,15 +211,13 @@ make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
 %if %{with debug}
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
-rm -rf obj
-
+find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %else
 make %{?_smp_mflags} $MAME_FLAGS \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
-rm -rf obj
-
+find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS TARGET=mess\
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %endif
@@ -348,6 +361,12 @@ popd
 
 
 %changelog
+* Tue Oct 30 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u2-1
+- Updated to 0.147u2
+- Conditionalised the low memory workaround
+- Use system libjpeg-turbo on Fedora 19 and above
+- Do not delete the entire obj/, leave the bits needed by the -debuginfo package
+
 * Sat Oct 27 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-2
 - Work around low memory on the RPM Fusion builder
 
