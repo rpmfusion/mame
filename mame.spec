@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 147
-%global sourceupdate 0
+%global sourceupdate 2
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -26,12 +26,10 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
-#Get from http://mamedev.org/releases/whatsnew_0%{baseversion}.txt and compress
-Source100:      whatsnew_0%{baseversion}.zip
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
@@ -143,10 +141,10 @@ large size.
 
 %prep
 %setup -qcT
-install -pm 644 %{SOURCE100} .
 for sourcefile in %{sources}; do
     7za x $sourcefile
 done
+sed -i '2157d' src/mess/mess.mak
 find . -type f -not -name *.png -exec sed -i 's/\r//' {} \;
 %if 0%{?sourceupdate}
 i=1
@@ -213,13 +211,13 @@ make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
 %if %{with debug}
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
-rm -rf obj
+find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %else
 make %{?_smp_mflags} $MAME_FLAGS \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
-rm -rf obj
+find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS TARGET=mess\
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %endif
@@ -335,7 +333,7 @@ popd
 %endif
 
 %files -n mess
-#doc messnew*.txt
+%doc messnew*.txt
 %config(noreplace) %{_sysconfdir}/mess/mess.ini
 %dir %{_sysconfdir}/mess
 %{_sysconfdir}/skel/.mess
@@ -363,7 +361,22 @@ popd
 
 
 %changelog
-* Sun Oct 28 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147-1
+* Tue Oct 30 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u2-1
+- Updated to 0.147u2
+- Conditionalised the low memory workaround
+- Use system libjpeg-turbo on Fedora 19 and above
+- Do not delete the entire obj/, leave the bits needed by the -debuginfo package
+
+* Sat Oct 27 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-2
+- Work around low memory on the RPM Fusion builder
+
+* Mon Oct 08 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u1-1
+- Updated to 0.147u1
+- Dropped missing whatsnew.txt workaround
+- Fixed incorrect paths in mess.ini
+- Remove the object tree between mame and mess builds to prevent mess using /etc/mame
+
+* Fri Sep 21 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147-1
 - Updated to 0.147
 - Merged with mess
 - Streamlined the directories installation
@@ -371,8 +384,6 @@ popd
 - Fixed mame.6 installation location
 - Re-enabled ldplayer
 - Cleaned-up ancient Obsoletes/Provides
-- Worked around low memory on the RPM Fusion builder
-- Use system libjpeg-turbo on Fedora 19 and above
 
 * Mon Aug 20 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.146u5-1
 - Updated to 0.146u5
