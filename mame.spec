@@ -11,6 +11,7 @@
 %bcond_without lowmem
 %if %{with lowmem}
 %global optflags %{optflags} -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
+%global _find_debuginfo_dwz_opts %{nil}
 %endif
 
 Name:           mame
