@@ -1,7 +1,7 @@
-diff -up mame-0.142u1/makefile.verbosebuild mame-0.142u1/makefile
---- mame-0.142u1/makefile.verbosebuild	2011-04-19 21:29:01.000000000 +0200
-+++ mame-0.142u1/makefile	2011-04-19 21:31:40.000000000 +0200
-@@ -297,12 +297,12 @@ BUILD_EXE = $(EXE)
+diff -up mame-0.147u4/makefile.verbosebuild mame-0.147u4/makefile
+--- mame-0.147u4/makefile.verbosebuild	2012-12-17 21:53:58.176154755 +0100
++++ mame-0.147u4/makefile	2012-12-17 21:55:26.559977075 +0100
+@@ -307,13 +307,13 @@ BUILD_EXE = $(EXE)
  endif
  
  # compiler, linker and utilities
@@ -14,12 +14,14 @@ diff -up mame-0.142u1/makefile.verbosebuild mame-0.142u1/makefile
  MD = -mkdir$(EXE)
 -RM = @rm -f
 -OBJDUMP = @objdump
+-PYTHON = @python
 +RM = rm -f
 +OBJDUMP = objdump
++PYTHON = python
  
  
- 
-@@ -755,12 +755,12 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
+ #-------------------------------------------------
+@@ -786,12 +786,12 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
  
  $(OBJ)/%.lh: $(SRC)/%.lay $(FILE2STR_TARGET)
  	@echo Converting $<...
