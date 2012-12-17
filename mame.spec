@@ -5,12 +5,11 @@
 %bcond_with debug
 
 %global baseversion 147
-%global sourceupdate 3
+%global sourceupdate 4
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
 %if %{with lowmem}
-%global optflags %{optflags} -Wl,--no-keep-memory -Wl,--reduce-memory-overheads
 %global _find_debuginfo_dwz_opts %{nil}
 %endif
 
@@ -32,7 +31,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
@@ -47,7 +46,7 @@ BuildRequires:  flac-devel
 BuildRequires:  GConf2-devel
 BuildRequires:  gtk2-devel
 %if 0%{?fedora} >= 19
-BuildRequires:  libjpeg-devel
+BuildRequires:  libjpeg-turbo-devel
 %endif
 BuildRequires:  p7zip
 BuildRequires:  SDL_ttf-devel
@@ -362,6 +361,12 @@ popd
 
 
 %changelog
+* Mon Dec 17 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u4-1
+- Updated to 0.147u4
+- Updated the lowmem workaround - the linker is not the culprit, dwz is
+- BR: libjpeg-devel → libjpeg-turbo-devel
+- Updated the verbosebuild patch
+
 * Mon Nov 19 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u3-1
 - Updated to 0.147u3
 
