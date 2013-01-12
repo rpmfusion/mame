@@ -4,8 +4,8 @@
 %bcond_without ldplayer
 %bcond_with debug
 
-%global baseversion 147
-%global sourceupdate 4
+%global baseversion 148
+#global sourceupdate 4
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -26,12 +26,13 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
+Source100:      whatsnew.zip
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
+#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
 #Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
 #Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
@@ -361,6 +362,9 @@ popd
 
 
 %changelog
+* Sat Jan 12 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.148-1
+- Updated to 0.148
+
 * Mon Dec 17 2012 Julian Sikorski <belegdol@fedoraproject.org> - 0.147u4-1
 - Updated to 0.147u4
 - Updated the lowmem workaround - the linker is not the culprit, dwz is
