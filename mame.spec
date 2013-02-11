@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 148
-#global sourceupdate 4
+%global sourceupdate 1
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -26,10 +26,10 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
-Source100:      whatsnew.zip
+#Source100:      whatsnew.zip
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -46,7 +46,7 @@ BuildRequires:  expat-devel
 BuildRequires:  flac-devel
 BuildRequires:  GConf2-devel
 BuildRequires:  gtk2-devel
-%if 0%{?fedora} >= 19
+%if 0%{?fedora} >= 18
 BuildRequires:  libjpeg-turbo-devel
 %endif
 BuildRequires:  p7zip
@@ -54,7 +54,7 @@ BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
-%if 0%{?fedora} < 19
+%if 0%{?fedora} < 18
 Provides:       bundled(libjpeg) = 8c
 %endif
 Provides:       bundled(lzma-sdk) = 9.22
@@ -96,7 +96,7 @@ Summary:        Standalone laserdisc player based on MAME
 Summary:        Multi Emulator Super System
 Requires:       mess-data = %{version}-%{release}
 
-%if 0%{?fedora} < 19
+%if 0%{?fedora} < 18
 Provides:       bundled(libjpeg) = 8c
 %endif
 Provides:       bundled(lzma-sdk) = 9.22
@@ -199,7 +199,7 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
     BUILD_FLAC=0 SUFFIX64="
 
-%if 0%{?fedora} >= 19
+%if 0%{?fedora} >= 18
 MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=0"
 %else
 MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=1"
@@ -362,6 +362,10 @@ popd
 
 
 %changelog
+* Mon Feb 11 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.148u1-1
+- Updated to 0.148u1
+- Use system libjpeg on Fedora 18 too (RH bug #854695)
+
 * Sat Jan 12 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.148-1
 - Updated to 0.148
 
