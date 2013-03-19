@@ -5,7 +5,12 @@
 %bcond_with debug
 
 %global baseversion 148
-%global sourceupdate 1
+%global sourceupdate 2
+#global svn 21418
+
+%if 0%{?svn}
+%global svnrelease .%{svn}svn
+%endif
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -19,18 +24,22 @@ Version:        0.%{baseversion}u%{sourceupdate}
 %else
 Version:        0.%{baseversion}
 %endif
-Release:        1%{?dist}
+
+Release:        1%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
 License:        MAME License
 URL:            http://mamedev.org/
+%if 0%{?svn}
+Source0:        %{name}-svn%{svn}.tar.xz
+%else
 Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseversion}s.exe
 #Source100:      whatsnew.zip
 %if 0%{?sourceupdate}
 #Source updates
 Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
+Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
 #Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
@@ -39,17 +48,20 @@ Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
 #Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
+%endif
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
-BuildRequires:  GConf2-devel
-BuildRequires:  gtk2-devel
 %if 0%{?fedora} >= 18
 BuildRequires:  libjpeg-turbo-devel
 %endif
+%if !0%{?svn}
 BuildRequires:  p7zip
+%endif
+BuildRequires:  python
+BuildRequires:  qt-devel
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
@@ -141,6 +153,9 @@ large size.
 
 
 %prep
+%if 0%{?svn}
+%setup -qn %{name}-export
+%else
 %setup -qcT
 for sourcefile in %{sources}; do
     7za x $sourcefile
@@ -153,6 +168,7 @@ while [ $i -le %{sourceupdate} ]; do
     patch -p0 -E < 0%{baseversion}u${i}.diff
     i=`expr $i + 1`
 done
+%endif
 %endif
 %patch0 -p1 -b .fortify
 %patch2 -p1 -b .verbosebuild
@@ -297,7 +313,10 @@ popd
 
 %files
 %doc docs/config.txt docs/hlsl.txt docs/license.txt docs/mame.txt
-%doc docs/newvideo.txt docs/nscsi.txt whatsnew*.txt
+%doc docs/newvideo.txt docs/nscsi.txt
+%if !0%{?svn}
+%doc whatsnew*.txt
+%endif
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/skel/.%{name}
@@ -334,7 +353,9 @@ popd
 %endif
 
 %files -n mess
+%if !0%{?svn}
 %doc messnew*.txt
+%endif
 %config(noreplace) %{_sysconfdir}/mess/mess.ini
 %dir %{_sysconfdir}/mess
 %{_sysconfdir}/skel/.mess
@@ -362,6 +383,11 @@ popd
 
 
 %changelog
+* Tue Mar 19 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.148u2-1
+- Updated to 0.148u2
+- Switched to the qt debugger and adjusted BR accordingly
+- Made it easy to build an svn snapshot
+
 * Mon Feb 11 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.148u1-1
 - Updated to 0.148u1
 - Use system libjpeg on Fedora 18 too (RH bug #854695)
