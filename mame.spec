@@ -160,7 +160,6 @@ large size.
 for sourcefile in %{sources}; do
     7za x $sourcefile
 done
-sed -i '2157d' src/mess/mess.mak
 find . -type f -not -name *.png -exec sed -i 's/\r//' {} \;
 %if 0%{?sourceupdate}
 i=1
