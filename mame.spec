@@ -5,7 +5,7 @@
 %bcond_with debug
 
 %global baseversion 149
-#global sourceupdate 5
+%global sourceupdate 1
 #global svn 21418
 
 %if 0%{?svn}
@@ -38,7 +38,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 #Source100:      whatsnew.zip
 %if 0%{?sourceupdate}
 #Source updates
-#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -172,6 +172,11 @@ done
 %patch0 -p1 -b .fortify
 %patch2 -p1 -b .verbosebuild
 
+# Fix encoding
+for whatsnew in whatsnew.txt messnew.txt; do
+    iconv -f iso8859-1 -t utf-8 $whatsnew > $whatsnew.conv
+    mv -f $whatsnew.conv $whatsnew
+done
 
 # Create ini files
 cat > %{name}.ini << EOF
@@ -382,6 +387,9 @@ popd
 
 
 %changelog
+* Wed Jul 24 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.149u1-1
+- Updated to 0.149u1
+
 * Tue Jun 11 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.149-1
 - Updated to 0.149
 
