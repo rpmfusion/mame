@@ -4,8 +4,8 @@
 %bcond_without ldplayer
 %bcond_with debug
 
-%global baseversion 149
-%global sourceupdate 1
+%global baseversion 150
+#global sourceupdate 1
 #global svn 21418
 
 %if 0%{?svn}
@@ -38,7 +38,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 #Source100:      whatsnew.zip
 %if 0%{?sourceupdate}
 #Source updates
-Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
+#Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
 #Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
 #Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
 #Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
@@ -182,7 +182,7 @@ done
 cat > %{name}.ini << EOF
 # Define multi-user paths
 artpath            %{_datadir}/%{name}/artwork;%{_datadir}/%{name}/effects
-cheatpath          %{_datadir}/%{name}/cheats
+cheatpath          %{_datadir}/%{name}/cheat
 ctrlrpath          %{_datadir}/%{name}/ctrlr
 fontpath           %{_datadir}/%{name}/fonts
 hashpath           %{_datadir}/%{name}/hash
@@ -387,6 +387,10 @@ popd
 
 
 %changelog
+* Thu Sep 19 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.150-1
+- Updated to 0.150
+- Fixed the cheatpath
+
 * Wed Jul 24 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.149u1-1
 - Updated to 0.149u1
 
