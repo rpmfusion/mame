@@ -25,7 +25,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 Version:        0.%{baseversion}
 %endif
 
-Release:        1%{?svnrelease}%{?dist}
+Release:        2%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 #Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
@@ -387,6 +387,9 @@ popd
 
 
 %changelog
+* Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.150-2
+- Rebuilt
+
 * Thu Sep 19 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.150-1
 - Updated to 0.150
 - Fixed the cheatpath
