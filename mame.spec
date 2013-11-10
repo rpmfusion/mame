@@ -3,8 +3,9 @@
 # --with debug to override
 %bcond_without ldplayer
 %bcond_with debug
+%bcond_with simd
 
-%global baseversion 150
+%global baseversion 151
 #global sourceupdate 1
 #global svn 21418
 
@@ -25,11 +26,10 @@ Version:        0.%{baseversion}u%{sourceupdate}
 Version:        0.%{baseversion}
 %endif
 
-Release:        2%{?svnrelease}%{?dist}
+Release:        1%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
-#Files in src/lib/util and src/osd (except src/osd/sdl) are BSD
-License:        MAME License
+License:        MAME License and BSD
 URL:            http://mamedev.org/
 %if 0%{?svn}
 Source0:        %{name}-svn%{svn}.tar.xz
@@ -54,21 +54,17 @@ Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
-%if 0%{?fedora} >= 18
 BuildRequires:  libjpeg-turbo-devel
-%endif
 %if !0%{?svn}
 BuildRequires:  p7zip
 %endif
+BuildRequires:  portmidi-devel
 BuildRequires:  python
 BuildRequires:  qt-devel
 BuildRequires:  SDL_ttf-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
-%if 0%{?fedora} < 18
-Provides:       bundled(libjpeg) = 8c
-%endif
 Provides:       bundled(lzma-sdk) = 9.22
 
 %description
@@ -210,20 +206,21 @@ EOF
 #make a copy for MESS
 sed 's/%{name}/mess/g' %{name}.ini > mess.ini
 
+%if %{with simd}
+sed -i 's/USE_SIMD        (0)/USE_SIMD        (1)/' src/emu/cpu/rsp/rsp.h
+%endif
 
 %build
 #these flags are already included in the Makefile
-RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e s/"-O2 -g -pipe -Wall "//)
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-O2 -g -pipe -Wall //')
+
+%if %{with simd}
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-mtune=generic/-march=corei7-avx/')
+%endif
 
 #save some space
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_FLAC=0 SUFFIX64="
-
-%if 0%{?fedora} >= 18
-MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=0"
-%else
-MAME_FLAGS="$MAME_FLAGS BUILD_JPEGLIB=1"
-%endif
+    BUILD_FLAC=0 BUILD_JPEGLIB=0 BUILD_MIDILIB=0 SUFFIX64="
 
 %if %{with ldplayer}
 make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
@@ -308,9 +305,9 @@ pushd man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
-install -pm 644 chdman.1 jedutil.1 ldverify.1 romcmp.1 testkeys.1 \
-    $RPM_BUILD_ROOT%{_mandir}/man1
-install -pm 644 mame.6 $RPM_BUILD_ROOT%{_mandir}/man6
+install -pm 644 castool.1 chdman.1 imgtool.1 jedutil.1 ldresample.1 ldverify.1 \
+    romcmp.1 testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install -pm 644 mame.6 mess.6 $RPM_BUILD_ROOT%{_mandir}/man6
 popd
 popd
 
@@ -346,6 +343,7 @@ popd
 %{_bindir}/unidasm
 %{_mandir}/man1/chdman.1*
 %{_mandir}/man1/jedutil.1*
+%{_mandir}/man1/ldresample.1*
 %{_mandir}/man1/ldverify.1*
 %{_mandir}/man1/romcmp.1*
 %{_mandir}/man1/testkeys.1*
@@ -368,12 +366,15 @@ popd
 %else
 %{_bindir}/mess
 %endif
+%{_mandir}/man6/mess.6*
 
 %files -n mess-tools
 %doc docs/imgtool.txt
 %{_bindir}/castool
 %{_bindir}/floptool
 %{_bindir}/imgtool
+%{_mandir}/man1/castool.1*
+%{_mandir}/man1/imgtool.1*
 
 %files data
 %{_datadir}/%{name}
@@ -387,6 +388,14 @@ popd
 
 
 %changelog
+* Sun Nov 10 2013 Julian Sikorski <belegdol@fedoraproject.org> - 0.151-1
+- Updated to 0.151
+- Updated the verbosebuild patch
+- Use system-wide portmidi
+- Fedora 17 is long EOL, always use system-wide libjpeg
+- Added a conditional N64 SIMD
+- Added new man pages
+
 * Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.150-2
 - Rebuilt
 

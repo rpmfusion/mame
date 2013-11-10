@@ -1,16 +1,17 @@
-diff -up mame-0.147u4/makefile.verbosebuild mame-0.147u4/makefile
---- mame-0.147u4/makefile.verbosebuild	2012-12-17 21:53:58.176154755 +0100
-+++ mame-0.147u4/makefile	2012-12-17 21:55:26.559977075 +0100
-@@ -307,13 +307,13 @@ BUILD_EXE = $(EXE)
- endif
+diff -up mame-0.151/makefile.verbosebuild mame-0.151/makefile
+--- mame-0.151/makefile.verbosebuild	2013-11-10 09:48:28.461065621 +0100
++++ mame-0.151/makefile	2013-11-10 09:51:14.637247110 +0100
+@@ -330,14 +330,14 @@ endif
  
  # compiler, linker and utilities
+ ifneq ($(TARGETOS),emscripten)
 -AR = @ar
 -CC = @gcc
 -LD = @g++
 +AR = ar
 +CC = gcc
 +LD = g++
+ endif
  MD = -mkdir$(EXE)
 -RM = @rm -f
 -OBJDUMP = @objdump
@@ -21,7 +22,37 @@ diff -up mame-0.147u4/makefile.verbosebuild mame-0.147u4/makefile
  
  
  #-------------------------------------------------
-@@ -786,12 +786,12 @@ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
+@@ -890,49 +890,49 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
+ 	@echo Compiling $<...
+ 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+ ifdef CPPCHECK
+-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
++	$(CPPCHECK) $(CPPCHECKFLAGS) $<
+ endif
+ 
+ $(OBJ)/%.o: $(OBJ)/%.c | $(OSPREBUILD)
+ 	@echo Compiling $<...
+ 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+ ifdef CPPCHECK
+-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
++	$(CPPCHECK) $(CPPCHECKFLAGS) $<
+ endif
+ 
+ $(OBJ)/%.pp: $(SRC)/%.c | $(OSPREBUILD)
+ 	@echo Compiling $<...
+ 	$(CC) $(CDEFS) $(CFLAGS) -E $< -o $@
+ ifdef CPPCHECK
+-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
++	$(CPPCHECK) $(CPPCHECKFLAGS) $<
+ endif
+ 
+ $(OBJ)/%.s: $(SRC)/%.c | $(OSPREBUILD)
+ 	@echo Compiling $<...
+ 	$(CC) $(CDEFS) $(CFLAGS) -S $< -o $@
+ ifdef CPPCHECK
+-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
++	$(CPPCHECK) $(CPPCHECKFLAGS) $<
+ endif
  
  $(OBJ)/%.lh: $(SRC)/%.lay $(FILE2STR_TARGET)
  	@echo Converting $<...
@@ -37,3 +68,16 @@ diff -up mame-0.147u4/makefile.verbosebuild mame-0.147u4/makefile
  
  $(DRIVLISTOBJ): $(DRIVLISTSRC)
  	@echo Compiling $<...
+ 	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
+ ifdef CPPCHECK
+-	@$(CPPCHECK) $(CPPCHECKFLAGS) $<
++	$(CPPCHECK) $(CPPCHECKFLAGS) $<
+ endif
+ 
+ $(DRIVLISTSRC): $(SRC)/$(TARGET)/$(SUBTARGET).lst $(MAKELIST_TARGET)
+ 	@echo Building driver list $<...
+-	@$(MAKELIST) $< >$@
++	$(MAKELIST) $< >$@
+ 
+ $(OBJ)/%.a:
+ 	@echo Archiving $@...
