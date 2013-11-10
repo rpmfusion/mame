@@ -144,8 +144,8 @@ Obsoletes:      mess-data < 0.146-2
 BuildArch:      noarch
 
 %description data-software-lists
-%{summary}. These are split from the main -data subpackage due to relatively
-large size.
+%{summary}. These are split from the main -data
+subpackage due to relatively large size.
 
 
 %prep
@@ -221,6 +221,11 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-mtune=generic/-march=corei7-avx
 #save some space
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
     BUILD_FLAC=0 BUILD_JPEGLIB=0 BUILD_MIDILIB=0 SUFFIX64="
+
+#only use assembly on supported architectures
+%ifnarch %{ix86} x86_64 ppc ppc64
+MAME_FLAGS="$MAME_FLAGS NOASM=1"
+%endif
 
 %if %{with ldplayer}
 make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
@@ -395,6 +400,7 @@ popd
 - Fedora 17 is long EOL, always use system-wide libjpeg
 - Added a conditional N64 SIMD
 - Added new man pages
+- Only use assembly on supported architectures
 
 * Mon Sep 30 2013 Nicolas Chauvet <kwizart@gmail.com> - 0.150-2
 - Rebuilt
