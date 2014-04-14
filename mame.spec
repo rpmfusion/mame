@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 152
+%global baseversion 153
 #global sourceupdate 1
 #global svn 21418
 
@@ -285,7 +285,7 @@ install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}
 install -pm 755 mess $RPM_BUILD_ROOT%{_bindir}
 %endif
 install -pm 755 chdman jedutil ldresample ldverify romcmp testkeys unidasm \
-    castool floptool imgtool $RPM_BUILD_ROOT%{_bindir}
+    castool floptool imgtool pngcmp nltool $RPM_BUILD_ROOT%{_bindir}
 #for tool in regrep runtest split src2html srcclean
 for tool in regrep split src2html srcclean
 do
@@ -339,6 +339,8 @@ popd
 %{_bindir}/ldresample
 %{_bindir}/ldverify
 %{_bindir}/%{name}-regrep
+%{_bindir}/nltool
+%{_bindir}/pngcmp
 %{_bindir}/romcmp
 #%{_bindir}/%{name}-runtest
 %{_bindir}/%{name}-split
@@ -393,6 +395,9 @@ popd
 
 
 %changelog
+* Mon Apr 14 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.153-1
+- Updated to 0.153
+
 * Wed Jan 01 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.152-1
 - Updated to 0.152
 
