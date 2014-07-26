@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 153
+%global baseversion 154
 #global sourceupdate 1
 #global svn 21418
 
@@ -39,14 +39,6 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %if 0%{?sourceupdate}
 #Source updates
 #Source1:        http://mamedev.org/updates/0%{baseversion}u1_diff.zip
-#Source2:        http://mamedev.org/updates/0%{baseversion}u2_diff.zip
-#Source3:        http://mamedev.org/updates/0%{baseversion}u3_diff.zip
-#Source4:        http://mamedev.org/updates/0%{baseversion}u4_diff.zip
-#Source5:        http://mamedev.org/updates/0%{baseversion}u5_diff.zip
-#Source6:        http://mamedev.org/updates/0%{baseversion}u6_diff.zip
-#Source7:        http://mamedev.org/updates/0%{baseversion}u7_diff.zip
-#Source8:        http://mamedev.org/updates/0%{baseversion}u8_diff.zip
-#Source9:        http://mamedev.org/updates/0%{baseversion}u9_diff.zip
 %endif
 %endif
 Patch0:         %{name}-fortify.patch
@@ -169,7 +161,7 @@ done
 %patch2 -p1 -b .verbosebuild
 
 # Fix encoding
-for whatsnew in whatsnew.txt messnew.txt; do
+for whatsnew in messnew.txt; do
     iconv -f iso8859-1 -t utf-8 $whatsnew > $whatsnew.conv
     mv -f $whatsnew.conv $whatsnew
 done
@@ -232,16 +224,16 @@ make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'"
 %endif
 %if %{with debug}
-make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
-make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %else
-make %{?_smp_mflags} $MAME_FLAGS \
+make %{?_smp_mflags} $MAME_FLAGS TARGET=mess \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
-make %{?_smp_mflags} $MAME_FLAGS TARGET=mess\
+make %{?_smp_mflags} $MAME_FLAGS\
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 %endif
 
@@ -395,6 +387,10 @@ popd
 
 
 %changelog
+* Thu Jul 24 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.154-1
+- Updated to 0.154
+- Changed to build mess before mame
+
 * Mon Apr 14 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.153-1
 - Updated to 0.153
 
