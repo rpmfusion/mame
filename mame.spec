@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 154
+%global baseversion 155
 #global sourceupdate 1
 #global svn 21418
 
@@ -54,6 +54,7 @@ BuildRequires:  portmidi-devel
 BuildRequires:  python
 BuildRequires:  qt-devel
 BuildRequires:  SDL_ttf-devel
+BuildRequires:  sqlite-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
@@ -161,7 +162,7 @@ done
 %patch2 -p1 -b .verbosebuild
 
 # Fix encoding
-for whatsnew in messnew.txt; do
+for whatsnew in whatsnew.txt; do
     iconv -f iso8859-1 -t utf-8 $whatsnew > $whatsnew.conv
     mv -f $whatsnew.conv $whatsnew
 done
@@ -212,7 +213,7 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's/-mtune=generic/-march=corei7-avx
 
 #save some space
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 BUILD_EXPAT=0 BUILD_ZLIB=0 \
-    BUILD_FLAC=0 BUILD_JPEGLIB=0 BUILD_MIDILIB=0 SUFFIX64="
+    BUILD_FLAC=0 BUILD_JPEGLIB=0 BUILD_SQLITE3=0 BUILD_MIDILIB=0 SUFFIX64="
 
 #only use assembly on supported architectures
 %ifnarch %{ix86} x86_64 ppc ppc64
@@ -225,16 +226,16 @@ make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
 %endif
 %if %{with debug}
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 \
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 %else
 make %{?_smp_mflags} $MAME_FLAGS TARGET=mess \
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
 find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 make %{?_smp_mflags} $MAME_FLAGS\
-    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/mess;\"'" all
+    OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'" all
 %endif
 
 
@@ -387,6 +388,11 @@ popd
 
 
 %changelog
+* Wed Oct 15 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.155-1
+- Updated to 0.155
+- Fixed the knock-on effect of changed build order on ini file names
+- Use system sqlite3
+
 * Thu Jul 24 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.154-1
 - Updated to 0.154
 - Changed to build mess before mame
