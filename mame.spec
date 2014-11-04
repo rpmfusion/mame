@@ -26,7 +26,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 Version:        0.%{baseversion}
 %endif
 
-Release:        1%{?svnrelease}%{?dist}
+Release:        2%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD
@@ -223,6 +223,7 @@ MAME_FLAGS="$MAME_FLAGS NOASM=1"
 %if %{with ldplayer}
 make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer \
     OPT_FLAGS="$RPM_OPT_FLAGS -DINI_PATH='\"%{_sysconfdir}/%{name};\"'"
+find obj -type f -not -name \*.lh -and -not -name drivlist.c -exec rm {} \;
 %endif
 %if %{with debug}
 make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TARGET=mess \
@@ -388,6 +389,9 @@ popd
 
 
 %changelog
+* Tue Nov 04 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.155-2
+- Fixed the ini path correctly
+
 * Wed Oct 15 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.155-1
 - Updated to 0.155
 - Fixed the knock-on effect of changed build order on ini file names
