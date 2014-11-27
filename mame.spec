@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 155
+%global baseversion 156
 #global sourceupdate 1
 #global svn 21418
 
@@ -26,7 +26,7 @@ Version:        0.%{baseversion}u%{sourceupdate}
 Version:        0.%{baseversion}
 %endif
 
-Release:        2%{?svnrelease}%{?dist}
+Release:        1%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD
@@ -53,7 +53,7 @@ BuildRequires:  p7zip
 BuildRequires:  portmidi-devel
 BuildRequires:  python
 BuildRequires:  qt-devel
-BuildRequires:  SDL_ttf-devel
+BuildRequires:  SDL2_ttf-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
@@ -389,6 +389,10 @@ popd
 
 
 %changelog
+* Thu Nov 27 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.156-1
+- Updated to 0.156
+- Switched to SDL2
+
 * Tue Nov 04 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.155-2
 - Fixed the ini path correctly
 
