@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 156
+%global baseversion 157
 #global sourceupdate 1
 #global svn 21418
 
@@ -389,6 +389,10 @@ popd
 
 
 %changelog
+* Sat Jan 03 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.157-1
+- Updated to 0.157
+- Updated the verbosebuild patch
+
 * Thu Nov 27 2014 Julian Sikorski <belegdol@fedoraproject.org> - 0.156-1
 - Updated to 0.156
 - Switched to SDL2
