@@ -1,7 +1,7 @@
-diff -up mame-0.157/makefile.verbosebuild mame-0.157/makefile
---- mame-0.157/makefile.verbosebuild	2015-01-03 09:00:43.512311253 +0100
-+++ mame-0.157/makefile	2015-01-03 09:10:12.905229834 +0100
-@@ -346,14 +346,14 @@ endif
+diff -up mame-0.158/makefile.verbosebuild mame-0.158/makefile
+--- mame-0.158/makefile.verbosebuild	2015-01-28 18:46:50.098531078 +0100
++++ mame-0.158/makefile	2015-01-28 18:51:09.123828941 +0100
+@@ -360,14 +360,14 @@ endif
  
  # compiler, linker and utilities
  ifneq ($(TARGETOS),emscripten)
@@ -12,7 +12,7 @@ diff -up mame-0.157/makefile.verbosebuild mame-0.157/makefile
 +CC = gcc
 +LD = g++
  endif
- MD = -mkdir$(EXE)
+ MD = -mkdir$(BUILD_EXE)
 -RM = @rm -f
 -OBJDUMP = @objdump
 -PYTHON = @python
@@ -22,7 +22,7 @@ diff -up mame-0.157/makefile.verbosebuild mame-0.157/makefile
  
  
  #-------------------------------------------------
-@@ -947,49 +947,49 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
+@@ -956,28 +956,28 @@ $(OBJ)/%.o: $(SRC)/%.c | $(OSPREBUILD)
  	@echo Compiling $<...
  	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
  ifdef CPPCHECK
@@ -55,18 +55,7 @@ diff -up mame-0.157/makefile.verbosebuild mame-0.157/makefile
  endif
  
  $(OBJ)/%.lh: $(SRC)/%.lay $(SRC)/build/file2str.py
- 	@echo Converting $<...
--	@$(PYTHON) $(SRC)/build/file2str.py $< $@ layout_$(basename $(notdir $<))
-+	$(PYTHON) $(SRC)/build/file2str.py $< $@ layout_$(basename $(notdir $<))
- 
- $(OBJ)/%.fh: $(SRC)/%.png $(PNG2BDC_TARGET) $(SRC)/build/file2str.py
- 	@echo Converting $<...
--	@$(PNG2BDC) $< $(OBJ)/temp.bdc
--	@$(PYTHON) $(SRC)/build/file2str.py $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
-+	$(PNG2BDC) $< $(OBJ)/temp.bdc
-+	$(PYTHON) $(SRC)/build/file2str.py $(OBJ)/temp.bdc $@ font_$(basename $(notdir $<)) UINT8
- 
- $(DRIVLISTOBJ): $(DRIVLISTSRC)
+@@ -993,12 +993,12 @@ $(DRIVLISTOBJ): $(DRIVLISTSRC)
  	@echo Compiling $<...
  	$(CC) $(CDEFS) $(CFLAGS) -c $< -o $@
  ifdef CPPCHECK

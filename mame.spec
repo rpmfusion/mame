@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 157
+%global baseversion 158
 #global sourceupdate 1
 #global svn 21418
 
@@ -389,6 +389,10 @@ popd
 
 
 %changelog
+* Wed Jan 28 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.158-1
+- Updated to 0.158
+- Updated the verbosebuild patch
+
 * Sat Jan 03 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.157-1
 - Updated to 0.157
 - Updated the verbosebuild patch
