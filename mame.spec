@@ -42,6 +42,7 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %endif
 %endif
 Patch0:         %{name}-fortify.patch
+Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
@@ -159,6 +160,7 @@ done
 %endif
 %endif
 %patch0 -p1 -b .fortify
+%patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
 
 # Fix encoding
@@ -392,6 +394,7 @@ popd
 * Wed Jan 28 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.158-1
 - Updated to 0.158
 - Updated the verbosebuild patch
+- Patched to make build using system zlib and flac work
 
 * Sat Jan 03 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.157-1
 - Updated to 0.157
