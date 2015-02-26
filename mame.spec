@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 158
+%global baseversion 159
 #global sourceupdate 1
 #global svn 21418
 
@@ -42,7 +42,6 @@ Source0:        http://mamedev.org/downloader.php?file=releases/%{name}0%{baseve
 %endif
 %endif
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-systemlibs.patch
 Patch2:         %{name}-verbosebuild.patch
 
 BuildRequires:  expat-devel
@@ -160,7 +159,6 @@ done
 %endif
 %endif
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .systemlibs
 %patch2 -p1 -b .verbosebuild
 
 # Fix encoding
@@ -306,8 +304,8 @@ pushd man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
-install -pm 644 castool.1 chdman.1 imgtool.1 jedutil.1 ldresample.1 ldverify.1 \
-    romcmp.1 testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install -pm 644 castool.1 chdman.1 imgtool.1 floptool.1 jedutil.1 ldresample.1 \
+    ldverify.1 romcmp.1 testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install -pm 644 mame.6 mess.6 $RPM_BUILD_ROOT%{_mandir}/man6
 popd
 popd
@@ -377,6 +375,7 @@ popd
 %{_bindir}/floptool
 %{_bindir}/imgtool
 %{_mandir}/man1/castool.1*
+%{_mandir}/man1/floptool.1*
 %{_mandir}/man1/imgtool.1*
 
 %files data
@@ -391,6 +390,10 @@ popd
 
 
 %changelog
+* Thu Feb 26 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.159-1
+- Updated to 0.159
+- Updated the verbosebuild patch
+
 * Wed Jan 28 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.158-1
 - Updated to 0.158
 - Updated the verbosebuild patch
