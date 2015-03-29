@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 159
+%global baseversion 160
 #global sourceupdate 1
 #global svn 21418
 
@@ -289,7 +289,7 @@ install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
 install -pm 644 hlsl/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
 install -pm 644 keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
-pushd src/osd/sdl
+pushd src/osd/modules/opengl
 install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
 for folder in artwork hash hlsl keymaps shader
 do
@@ -300,14 +300,14 @@ do
     done
     popd
 done
-pushd man
+popd
+pushd src/osd/sdl/man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
 install -pm 644 castool.1 chdman.1 imgtool.1 floptool.1 jedutil.1 ldresample.1 \
     ldverify.1 romcmp.1 testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install -pm 644 mame.6 mess.6 $RPM_BUILD_ROOT%{_mandir}/man6
-popd
 popd
 
 
@@ -390,6 +390,9 @@ popd
 
 
 %changelog
+* Sun Mar 29 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.160-1
+- Updated to 0.160
+
 * Thu Feb 26 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.159-1
 - Updated to 0.159
 - Updated the verbosebuild patch
