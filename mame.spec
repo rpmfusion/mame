@@ -35,7 +35,9 @@ BuildRequires:  expat-devel
 BuildRequires:  flac-devel
 #BuildRequires:  jsoncpp-devel
 BuildRequires:  libjpeg-turbo-devel
-BuildRequires:  lua-devel
+%if 0%{?fedora} >= 22
+BuildRequires:  lua-devel >= 5.3.0
+%endif
 #BuildRequires:  mongoose-devel
 %if !0%{?svn}
 BuildRequires:  p7zip
@@ -51,6 +53,9 @@ Requires:       %{name}-data = %{version}-%{release}
 Provides:       bundled(bgfx)
 Provides:       bundled(bx)
 Provides:       bundled(jsoncpp)
+%if 0%{?fedora} < 22
+Provides:       bundled(lua) = 5.3.0
+%endif
 Provides:       bundled(lzma-sdk) = 9.22
 Provides:       bundled(mongoose)
 Provides:       mess = %{version}-%{release}
@@ -178,10 +183,16 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's@-mtune=generic@-march=corei7-avx
 %endif
 
 #save some space
-#jsoncpp and mongoose in Fedora are too old
+#jsoncpp and mongoose in Fedora are too old, lua is only new enough on F22+
+%if 0%{?fedora} >= 22
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
     USE_SYSTEM_LIB_LUA=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1"
+%else
+MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
+    USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
+    USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1"
+%endif
 
 #only use assembly on supported architectures
 %ifnarch %{ix86} x86_64 ppc ppc64
