@@ -96,6 +96,8 @@ Summary:        Standalone laserdisc player based on MAME
 %package data
 Summary:        Data files used by MAME
 
+Provides:       mess-data = %{version}-%{release}
+
 BuildArch:      noarch
 
 %description data
@@ -104,6 +106,9 @@ BuildArch:      noarch
 %package data-software-lists
 Summary:        Software lists used by MAME
 Requires:       %{name}-data = %{version}-%{release}
+
+Provides:       mess-data-software-lists = %{version}-%{release}
+Obsoletes:      mess-data < 0.146-2
 
 BuildArch:      noarch
 
