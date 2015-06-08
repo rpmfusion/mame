@@ -1,7 +1,7 @@
-diff -up mame-0.137/src/osd/sdl/sdlprefix.h.fortify mame-0.137/src/osd/sdl/sdlprefix.h
---- mame-0.137/src/osd/sdl/sdlprefix.h.fortify	2010-03-21 14:20:41.000000000 +0100
-+++ mame-0.137/src/osd/sdl/sdlprefix.h	2010-03-21 14:21:07.000000000 +0100
-@@ -50,9 +50,9 @@
+diff -up mame-0.161/src/osd/sdl/sdlprefix.h.fortify mame-0.161/src/osd/sdl/sdlprefix.h
+--- mame-0.161/src/osd/sdl/sdlprefix.h.fortify	2015-04-30 22:18:01.031569146 +0200
++++ mame-0.161/src/osd/sdl/sdlprefix.h	2015-04-30 22:21:30.273905638 +0200
+@@ -76,8 +76,8 @@ struct _IO_FILE {};  //_IO_FILE is an op
  #endif
  
  // fix for Ubuntu 8.10
@@ -13,4 +13,3 @@ diff -up mame-0.137/src/osd/sdl/sdlprefix.h.fortify mame-0.137/src/osd/sdl/sdlpr
 +// #endif
  
  #endif /* SDLMAME_UNIX */
- 
