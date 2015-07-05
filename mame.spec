@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 162
+%global baseversion 163
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -14,12 +14,7 @@
 %endif
 
 Name:           mame
-%if 0%{?sourceupdate}
-Version:        0.%{baseversion}u%{sourceupdate}
-%else
 Version:        0.%{baseversion}
-%endif
-
 Release:        1%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
@@ -28,8 +23,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source100:      whatsnew.zip
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-optflags.patch
-Patch2:         %{name}-systemlibs.patch
+Patch1:         %{name}-systempa.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -39,9 +33,8 @@ BuildRequires:  libjpeg-turbo-devel
 BuildRequires:  lua-devel >= 5.3.0
 %endif
 #BuildRequires:  mongoose-devel
-%if !0%{?svn}
 BuildRequires:  p7zip
-%endif
+BuildRequires:  portaudio-devel
 BuildRequires:  portmidi-devel
 BuildRequires:  python
 BuildRequires:  qt-devel
@@ -132,8 +125,7 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .optflags
-%patch2 -p1 -b .systemlibs
+%patch1 -p1 -b .systempa
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -187,20 +179,19 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's@-mtune=generic@-march=corei7-avx
 %if 0%{?fedora} >= 22
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
-    USE_SYSTEM_LIB_LUA=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1"
+    USE_SYSTEM_LIB_LUA=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 \
+    USE_SYSTEM_LIB_PORTAUDIO=1 SDL_INI_PATH=%{_sysconfdir}/%{name};"
 %else
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
-    USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1"
+    USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 \
+    USE_SYSTEM_LIB_PORTAUDIO=1 SDL_INI_PATH=%{_sysconfdir}/%{name};"
 %endif
 
 #only use assembly on supported architectures
 %ifnarch %{ix86} x86_64 ppc ppc64
 MAME_FLAGS="$MAME_FLAGS NOASM=1"
 %endif
-
-#genie makes passing INI_PATH as define impossible
-sed -i 's@"$HOME/.APP_NAME;.;ini"@"%{_sysconfdir}/%{name};"@' src/osd/sdl/sdlmain.c
 
 %if %{with ldplayer}
 make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
@@ -321,6 +312,12 @@ popd
 
 
 %changelog
+* Sun Jul 05 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-1
+- Updated to 0.163
+- Cleaned up the spec file further
+- Dropped upstreamed patches
+- Patched to use system PortAudio
+
 * Sun Jun 07 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.162-1
 - Updated to 0.162
 - Adapted to the new build system
