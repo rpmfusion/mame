@@ -188,18 +188,22 @@ MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_PORTAUDIO=1 SDL_INI_PATH=%{_sysconfdir}/%{name};"
 %endif
 
+%if %{with lowmem}
+MAME_FLAGS="$MAME_FLAGS LDOPTS=-Wl,--no-keep-memory,--reduce-memory-overheads"
+%endif
+
 #only use assembly on supported architectures
 %ifnarch %{ix86} x86_64 ppc ppc64
 MAME_FLAGS="$MAME_FLAGS NOASM=1"
 %endif
 
 %if %{with ldplayer}
-make $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
 %endif
 %if %{with debug}
-make $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
 %else
-make $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
 %endif
 
 
@@ -317,7 +321,7 @@ popd
 - Cleaned up the spec file further
 - Dropped upstreamed patches
 - Patched to use system PortAudio
-- Dropped %%{?_smp_mflags} in an attempt not to run out of memory when linking
+- Added more workarouds for low memory on the builder
 
 * Sun Jun 07 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.162-1
 - Updated to 0.162
