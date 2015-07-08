@@ -194,12 +194,12 @@ MAME_FLAGS="$MAME_FLAGS NOASM=1"
 %endif
 
 %if %{with ldplayer}
-make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
+make $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
 %endif
 %if %{with debug}
-make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
 %else
-make %{?_smp_mflags} $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
 %endif
 
 
@@ -317,6 +317,7 @@ popd
 - Cleaned up the spec file further
 - Dropped upstreamed patches
 - Patched to use system PortAudio
+- Dropped %%{?_smp_mflags} in an attempt not to run out of memory when linking
 
 * Sun Jun 07 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.162-1
 - Updated to 0.162
