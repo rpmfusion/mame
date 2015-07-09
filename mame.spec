@@ -228,12 +228,12 @@ install -d $RPM_BUILD_ROOT%{_mandir}/man6
 # install files
 install -pm 644 %{name}.ini $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 %if %{with ldplayer}
-install -pm 755 ldplayer?? $RPM_BUILD_ROOT%{_bindir}/ldplayer
+install -pm 755 ldplayer* $RPM_BUILD_ROOT%{_bindir}/ldplayer
 %endif
 %if %{with debug}
-install -pm 755 %{name}??d $RPM_BUILD_ROOT%{_bindir}/%{name}
+install -pm 755 %{name}*d $RPM_BUILD_ROOT%{_bindir}/%{name}
 %else
-install -pm 755 %{name}?? $RPM_BUILD_ROOT%{_bindir}/%{name}
+install -pm 755 %{name}* $RPM_BUILD_ROOT%{_bindir}/%{name}
 %endif
 install -pm 755 castool chdman floptool imgtool jedutil ldresample ldverify \
     nltool pngcmp romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
@@ -322,6 +322,7 @@ popd
 - Dropped upstreamed patches
 - Patched to use system PortAudio
 - Added more workarouds for low memory on the builder
+- Corrected the wildcards used in %%install section
 
 * Sun Jun 07 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.162-1
 - Updated to 0.162
