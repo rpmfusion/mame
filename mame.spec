@@ -191,7 +191,8 @@ MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
 %endif
 
 %if %{with lowmem}
-MAME_FLAGS="$MAME_FLAGS LDOPTS=-Wl,--no-keep-memory,--reduce-memory-overheads"
+MAME_FLAGS="$MAME_FLAGS LDOPTS=-Wl,--no-keep-memory,--reduce-memory-overheads \
+    SYMLEVEL=1"
 %endif
 
 #only use assembly on supported architectures
