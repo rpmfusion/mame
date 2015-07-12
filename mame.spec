@@ -24,6 +24,7 @@ Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{
 Source100:      whatsnew.zip
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systempa.patch
+Patch2:         %{name}-genie-smpfix.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -126,6 +127,7 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
 
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systempa
+%patch2 -p1 -b .smpfix
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -326,6 +328,7 @@ popd
 - Patched to use system PortAudio
 - Added more workarouds for low memory on the builder
 - Replaced wildcards with || approach
+- Fixed parallel building
 
 * Sun Jun 07 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.162-1
 - Updated to 0.162
