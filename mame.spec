@@ -15,7 +15,7 @@
 
 Name:           mame
 Version:        0.%{baseversion}
-Release:        1%{?svnrelease}%{?dist}
+Release:        2%{?svnrelease}%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
@@ -54,6 +54,8 @@ Provides:       bundled(lzma-sdk) = 9.22
 Provides:       bundled(mongoose)
 Provides:       mess = %{version}-%{release}
 Obsoletes:      mess < 0.160-2
+
+ExcludeArch:    %{arm}
 
 
 %description
@@ -322,6 +324,9 @@ popd
 
 
 %changelog
+* Mon Jul 13 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-2
+- Added ExcludeArch: %%{arm}
+
 * Sun Jul 05 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-1
 - Updated to 0.163
 - Cleaned up the spec file further
