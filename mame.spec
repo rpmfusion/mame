@@ -15,7 +15,7 @@
 
 Name:           mame
 Version:        0.%{baseversion}
-Release:        2%{?svnrelease}%{?dist}
+Release:        3%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
@@ -25,6 +25,7 @@ Source100:      whatsnew.zip
 Patch0:         %{name}-fortify.patch
 Patch1:         %{name}-systempa.patch
 Patch2:         %{name}-genie-smpfix.patch
+Patch3:         %{name}-armfix.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -54,8 +55,6 @@ Provides:       bundled(lzma-sdk) = 9.22
 Provides:       bundled(mongoose)
 Provides:       mess = %{version}-%{release}
 Obsoletes:      mess < 0.160-2
-
-ExcludeArch:    %{arm}
 
 
 %description
@@ -130,6 +129,7 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
 %patch0 -p1 -b .fortify
 %patch1 -p1 -b .systempa
 %patch2 -p1 -b .smpfix
+%patch3 -p1 -b .armfix
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -142,6 +142,7 @@ cat > %{name}.ini << EOF
 # Define multi-user paths
 artpath            %{_datadir}/%{name}/artwork;%{_datadir}/%{name}/effects
 cheatpath          %{_datadir}/%{name}/cheat
+crosshairpath      %{_datadir}/%{name}/crosshair
 ctrlrpath          %{_datadir}/%{name}/ctrlr
 fontpath           %{_datadir}/%{name}/fonts
 hashpath           %{_datadir}/%{name}/hash
@@ -156,7 +157,6 @@ cfg_directory      \$HOME/.%{name}/cfg
 comment_directory  \$HOME/.%{name}/comments
 diff_directory     \$HOME/.%{name}/diff
 input_directory    \$HOME/.%{name}/inp
-memcard_directory  \$HOME/.%{name}/memcard
 nvram_directory    \$HOME/.%{name}/nvram
 snapshot_directory \$HOME/.%{name}/snap
 state_directory    \$HOME/.%{name}/sta
@@ -324,6 +324,11 @@ popd
 
 
 %changelog
+* Tue Jul 14 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-3
+- Fixed arm build
+- Added crosshairpath to default .ini, removed memcard_directory
+- Further spec cleanups
+
 * Mon Jul 13 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-2
 - Added ExcludeArch: %%{arm}
 
