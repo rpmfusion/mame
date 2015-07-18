@@ -15,7 +15,7 @@
 
 Name:           mame
 Version:        0.%{baseversion}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
@@ -237,8 +237,8 @@ install -pm 755 ldplayer $RPM_BUILD_ROOT%{_bindir}/ldplayer || \
 install -pm 755 ldplayer64 $RPM_BUILD_ROOT%{_bindir}/ldplayer
 %endif
 %if %{with debug}
-install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}/%{name} || \
-install -pm 755 %{name}64d $RPM_BUILD_ROOT%{_bindir}/%{name}
+install -pm 755 %{name}d $RPM_BUILD_ROOT%{_bindir}/%{name}d || \
+install -pm 755 %{name}64d $RPM_BUILD_ROOT%{_bindir}/%{name}d
 %else
 install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}/%{name} || \
 install -pm 755 %{name}64 $RPM_BUILD_ROOT%{_bindir}/%{name}
@@ -324,6 +324,9 @@ popd
 
 
 %changelog
+* Sat Jul 18 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-4
+- Fixed debug conditional build (rfbz #3715)
+
 * Tue Jul 14 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-3
 - Fixed arm build
 - Added crosshairpath to default .ini, removed memcard_directory
