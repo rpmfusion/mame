@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 163
+%global baseversion 164
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -15,7 +15,7 @@
 
 Name:           mame
 Version:        0.%{baseversion}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
 License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
@@ -23,9 +23,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source100:      whatsnew.zip
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-systempa.patch
 Patch2:         %{name}-genie-smpfix.patch
-Patch3:         %{name}-armfix.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -127,9 +125,7 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .systempa
 %patch2 -p1 -b .smpfix
-%patch3 -p1 -b .armfix
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -324,6 +320,10 @@ popd
 
 
 %changelog
+* Thu Jul 30 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.164-1
+- Updated to 0.164
+- Dropped upstreamed patches
+
 * Sat Jul 18 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.163-4
 - Fixed debug conditional build (rfbz #3715)
 
