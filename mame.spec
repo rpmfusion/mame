@@ -23,6 +23,7 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source100:      whatsnew.zip
 Patch0:         %{name}-fortify.patch
+Patch1:         0001-emudummy.c-change-GAME_NO_SOUND-to-MACHINE_.patch
 Patch2:         %{name}-genie-smpfix.patch
 
 BuildRequires:  expat-devel
@@ -125,6 +126,7 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
+%patch1 -p1
 %patch2 -p1 -b .smpfix
 
 # Fix encoding
