@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 166
+%global baseversion 167
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -223,6 +223,7 @@ for folder in artwork chds cheats ctrlr effects fonts hash hlsl keymaps roms \
 do
     install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/$folder
 done
+install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl/artwork_support
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
 install -d $RPM_BUILD_ROOT%{_mandir}/man6
 
@@ -247,7 +248,8 @@ do
 done
 install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
-install -pm 644 hlsl/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
+install -pm 644 hlsl/*.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
+install -pm 644 hlsl/artwork_support/*.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl/artwork_support
 install -pm 644 keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
 pushd src/osd/modules/opengl
 install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
@@ -320,6 +322,10 @@ popd
 
 
 %changelog
+* Thu Oct 29 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.167-1
+- Update 0.167
+- Updated the smpfix patch
+
 * Thu Oct 01 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.166-1
 - Updated to 0.166
 
