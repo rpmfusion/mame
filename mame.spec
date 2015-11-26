@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 167
+%global baseversion 168
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -322,6 +322,10 @@ popd
 
 
 %changelog
+* Thu Nov 26 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.168-1
+- Updated to 0.168
+- Updated the smpfix patch
+
 * Thu Oct 29 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.167-1
 - Update 0.167
 - Updated the smpfix patch
