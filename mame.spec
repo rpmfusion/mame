@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 168
+%global baseversion 169
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -27,6 +27,7 @@ Patch2:         %{name}-genie-smpfix.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
+BuildRequires:  fontconfig-devel
 #BuildRequires:  jsoncpp-devel
 BuildRequires:  libjpeg-turbo-devel
 %if 0%{?fedora} >= 22
@@ -37,7 +38,7 @@ BuildRequires:  p7zip
 BuildRequires:  portaudio-devel
 BuildRequires:  portmidi-devel
 BuildRequires:  python
-BuildRequires:  qt-devel
+BuildRequires:  qt5-qtbase-devel
 BuildRequires:  SDL2_ttf-devel
 BuildRequires:  sqlite-devel
 BuildRequires:  zlib-devel
@@ -322,6 +323,11 @@ popd
 
 
 %changelog
+* Thu Dec 31 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.169-1
+- Updated to 0.169
+- Updated the smpfix patch
+- Updated BuildRequires for Qt5
+
 * Thu Nov 26 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.168-1
 - Updated to 0.168
 - Updated the smpfix patch
