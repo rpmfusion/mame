@@ -21,7 +21,7 @@ Summary:        Multiple Arcade Machine Emulator
 License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
-Source100:      whatsnew.zip
+Source1:        http://mamedev.org/releases/whatsnew_0%{baseversion}.txt
 Patch0:         %{name}-fortify.patch
 Patch2:         %{name}-genie-smpfix.patch
 
@@ -118,9 +118,8 @@ subpackage due to relatively large size.
 
 %prep
 %setup -qcT
-for sourcefile in %{sources}; do
-    7za x $sourcefile
-done
+7za x %{SOURCE0}
+install -pm 644 %{SOURCE1} whatsnew_0%{baseversion}.txt
 
 find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
