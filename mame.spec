@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 169
+%global baseversion 170
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -23,7 +23,6 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source1:        http://mamedev.org/releases/whatsnew_0%{baseversion}.txt
 Patch0:         %{name}-fortify.patch
-Patch2:         %{name}-genie-smpfix.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -125,7 +124,6 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
-%patch2 -p1 -b .smpfix
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -322,6 +320,10 @@ popd
 
 
 %changelog
+* Thu Jan 28 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.170-1
+- Updated to 0.170
+- Dropped the smpfix patch
+
 * Thu Dec 31 2015 Julian Sikorski <belegdol@fedoraproject.org> - 0.169-1
 - Updated to 0.169
 - Updated the smpfix patch
