@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 170
+%global baseversion 171
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -23,16 +23,17 @@ URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source1:        http://mamedev.org/releases/whatsnew_0%{baseversion}.txt
 Patch0:         %{name}-fortify.patch
+Patch1:         %{name}-%{version}-systemlibs.patch
+Patch2:         %{name}-%{version}-gcc6.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
 BuildRequires:  fontconfig-devel
-#BuildRequires:  jsoncpp-devel
 BuildRequires:  libjpeg-turbo-devel
-%if 0%{?fedora} >= 22
-BuildRequires:  lua-devel >= 5.3.0
+%if 0%{?fedora} >= 25
+BuildRequires:  libuv-devel
 %endif
-#BuildRequires:  mongoose-devel
+BuildRequires:  lua-devel >= 5.3.0
 BuildRequires:  p7zip
 BuildRequires:  portaudio-devel
 BuildRequires:  portmidi-devel
@@ -44,13 +45,16 @@ BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
 Provides:       bundled(bgfx)
-Provides:       bundled(bx)
-Provides:       bundled(jsoncpp)
-%if 0%{?fedora} < 22
-Provides:       bundled(lua) = 5.3.0
+Provides:       bundled(http-parser)
+Provides:       bundled(lsqlite3)
+Provides:       bundled(luafilesystem)
+Provides:       bundled(lua-zlib)
+%if 0%{?fedora} < 25
+Provides:       bundled(luv) = 1.8.0
 %endif
+Provides:       bundled(lua) = 5.3.0
 Provides:       bundled(lzma-sdk) = 9.22
-Provides:       bundled(mongoose)
+Provides:       bundled(softfloat)
 Provides:       mess = %{version}-%{release}
 Obsoletes:      mess < 0.160-2
 
@@ -124,6 +128,8 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
+%patch1 -p1 -b .systemlibs
+%patch2 -p1 -b .gcc6
 
 # Fix encoding
 #for whatsnew in whatsnew_0162.txt; do
@@ -173,18 +179,14 @@ RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's@-mtune=generic@-march=corei7-avx
 %endif
 
 #save some space
-#jsoncpp and mongoose in Fedora are too old, lua is only new enough on F22+
-%if 0%{?fedora} >= 22
 MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
     USE_SYSTEM_LIB_LUA=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 \
-    USE_SYSTEM_LIB_PORTAUDIO=1 SDL_INI_PATH=%{_sysconfdir}/%{name};"
-%else
-MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
-    USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
-    USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 \
-    USE_SYSTEM_LIB_PORTAUDIO=1 SDL_INI_PATH=%{_sysconfdir}/%{name};"
+    USE_SYSTEM_LIB_PORTAUDIO=1 \
+%if 0%{?fedora} >= 25
+    USE_SYSTEM_LIB_UV=1 \
 %endif
+    SDL_INI_PATH=%{_sysconfdir}/%{name};"
 
 %if %{with lowmem}
 MAME_FLAGS="$MAME_FLAGS LDOPTS=-Wl,--no-keep-memory,--reduce-memory-overheads \
@@ -320,6 +322,12 @@ popd
 
 
 %changelog
+* Sat Mar 12 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.171-1
+- Updated to 0.171
+- Added ability to build using system libuv
+- Cleaned up the list of bundled libs
+- Fixed building with gcc-6
+
 * Thu Jan 28 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.170-1
 - Updated to 0.170
 - Dropped the smpfix patch
