@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 171
+%global baseversion 172
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -18,13 +18,11 @@ Version:        0.%{baseversion}
 Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
-License:        MAME License and BSD and GPLv2+ and LGPLv2+ and Public Domain and zlib
+License:        GPLv2+
 URL:            http://mamedev.org/
 Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source1:        http://mamedev.org/releases/whatsnew_0%{baseversion}.txt
 Patch0:         %{name}-fortify.patch
-Patch1:         %{name}-%{version}-systemlibs.patch
-Patch2:         %{name}-%{version}-gcc6.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -128,24 +126,19 @@ find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
     -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
 
 %patch0 -p1 -b .fortify
-%patch1 -p1 -b .systemlibs
-%patch2 -p1 -b .gcc6
-
-# Fix encoding
-#for whatsnew in whatsnew_0162.txt; do
-#    iconv -f iso8859-1 -t utf-8 $whatsnew > $whatsnew.conv
-#    mv -f $whatsnew.conv $whatsnew
-#done
 
 # Create ini files
 cat > %{name}.ini << EOF
 # Define multi-user paths
 artpath            %{_datadir}/%{name}/artwork;%{_datadir}/%{name}/effects
+bgfx_path          %{_datadir}/%{name}/bgfx
 cheatpath          %{_datadir}/%{name}/cheat
 crosshairpath      %{_datadir}/%{name}/crosshair
 ctrlrpath          %{_datadir}/%{name}/ctrlr
 fontpath           %{_datadir}/%{name}/fonts
 hashpath           %{_datadir}/%{name}/hash
+languagepath       %{_datadir}/%{name}/language
+pluginspath        %{_datadir}/%{name}/plugins
 rompath            %{_datadir}/%{name}/roms;%{_datadir}/%{name}/chds
 samplepath         %{_datadir}/%{name}/samples
 
@@ -218,12 +211,11 @@ do
     install -d $RPM_BUILD_ROOT%{_sysconfdir}/skel/.%{name}/$folder
 done
 install -d $RPM_BUILD_ROOT%{_bindir}
-for folder in artwork chds cheats ctrlr effects fonts hash hlsl keymaps roms \
-    samples shader
+for folder in artwork bgfx chds cheats ctrlr effects fonts hash language \
+    plugins hlsl keymaps roms samples shader
 do
     install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/$folder
 done
-install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl/artwork_support
 install -d $RPM_BUILD_ROOT%{_mandir}/man1
 install -d $RPM_BUILD_ROOT%{_mandir}/man6
 
@@ -241,18 +233,29 @@ install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}/%{name} || \
 install -pm 755 %{name}64 $RPM_BUILD_ROOT%{_bindir}/%{name}
 %endif
 install -pm 755 castool chdman floptool imgtool jedutil ldresample ldverify \
-    nltool pngcmp romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
+    nltool nlwav pngcmp romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
 for tool in regrep split src2html srcclean
 do
     install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
 install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
+pushd bgfx
+    find -type d -exec install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/bgfx/{} \;
+    find -type f -exec install -pm 644 {} $RPM_BUILD_ROOT%{_datadir}/%{name}/bgfx/{} \;
+popd
 install -pm 644 hash/* $RPM_BUILD_ROOT%{_datadir}/%{name}/hash
 install -pm 644 hlsl/*.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl
-install -pm 644 hlsl/artwork_support/*.fx $RPM_BUILD_ROOT%{_datadir}/%{name}/hlsl/artwork_support
 install -pm 644 keymaps/* $RPM_BUILD_ROOT%{_datadir}/%{name}/keymaps
+pushd language
+    find -type d -exec install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/language/{} \;
+    find -type f -name \*.mo -exec install -pm 644 {} $RPM_BUILD_ROOT%{_datadir}/%{name}/language/{} \;
+popd
+pushd plugins
+    find -type d -exec install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/plugins/{} \;
+    find -type f -exec install -pm 644 {} $RPM_BUILD_ROOT%{_datadir}/%{name}/plugins/{} \;
+popd
 pushd src/osd/modules/opengl
-install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
+    install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
 popd
 pushd src/osd/sdl/man
 %if %{with ldplayer}
@@ -266,8 +269,8 @@ popd
 
 %files
 %doc docs/config.txt docs/floppy.txt docs/hlsl.txt docs/luaengine.md
-%doc docs/m6502.txt docs/mame.txt docs/mamelicense.txt docs/newvideo.txt
-%doc docs/nscsi.txt docs/SDL.txt README.md whatsnew*.txt 
+%doc docs/m6502.txt docs/mame.txt docs/newvideo.txt docs/nscsi.txt
+%doc docs/SDL.txt LICENSE.md README.md whatsnew*.txt 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/skel/.%{name}
@@ -283,14 +286,15 @@ popd
 %doc docs/imgtool.txt
 %{_bindir}/castool
 %{_bindir}/chdman
-%{_bindir}/jedutil
 %{_bindir}/floptool
 %{_bindir}/imgtool
+%{_bindir}/jedutil
 %{_bindir}/ldresample
 %{_bindir}/ldverify
-%{_bindir}/%{name}-regrep
 %{_bindir}/nltool
+%{_bindir}/nlwav
 %{_bindir}/pngcmp
+%{_bindir}/%{name}-regrep
 %{_bindir}/romcmp
 %{_bindir}/%{name}-split
 %{_bindir}/%{name}-src2html
@@ -322,6 +326,12 @@ popd
 
 
 %changelog
+* Thu Apr 07 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.172-1
+- Updated to 0.172
+- Dropped upstreamed patches
+- Added new files to the %%install and %%files sections
+- Updated the License
+
 * Sat Mar 12 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.171-1
 - Updated to 0.171
 - Added ability to build using system libuv
