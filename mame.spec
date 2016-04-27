@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 172
+%global baseversion 173
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -48,10 +48,9 @@ Provides:       bundled(lsqlite3)
 Provides:       bundled(luafilesystem)
 Provides:       bundled(lua-zlib)
 %if 0%{?fedora} < 25
-Provides:       bundled(luv) = 1.8.0
+Provides:       bundled(luv) = 1.9.0
 %endif
-Provides:       bundled(lua) = 5.3.0
-Provides:       bundled(lzma-sdk) = 9.22
+Provides:       bundled(lzma-sdk) = 15.14
 Provides:       bundled(softfloat)
 Provides:       mess = %{version}-%{release}
 Obsoletes:      mess < 0.160-2
@@ -233,12 +232,15 @@ install -pm 755 %{name} $RPM_BUILD_ROOT%{_bindir}/%{name} || \
 install -pm 755 %{name}64 $RPM_BUILD_ROOT%{_bindir}/%{name}
 %endif
 install -pm 755 castool chdman floptool imgtool jedutil ldresample ldverify \
-    nltool nlwav pngcmp romcmp testkeys unidasm $RPM_BUILD_ROOT%{_bindir}
+    nltool nlwav pngcmp romcmp unidasm $RPM_BUILD_ROOT%{_bindir}
 for tool in regrep split src2html srcclean
 do
     install -pm 755 $tool $RPM_BUILD_ROOT%{_bindir}/%{name}-$tool
 done
-install -pm 644 artwork/* $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork
+pushd artwork
+    find -type d -exec install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork/{} \;
+    find -type f -exec install -pm 644 {} $RPM_BUILD_ROOT%{_datadir}/%{name}/artwork/{} \;
+popd
 pushd bgfx
     find -type d -exec install -d $RPM_BUILD_ROOT%{_datadir}/%{name}/bgfx/{} \;
     find -type f -exec install -pm 644 {} $RPM_BUILD_ROOT%{_datadir}/%{name}/bgfx/{} \;
@@ -257,12 +259,12 @@ popd
 pushd src/osd/modules/opengl
     install -pm 644 shader/*.?sh $RPM_BUILD_ROOT%{_datadir}/%{name}/shader
 popd
-pushd src/osd/sdl/man
+pushd docs/man
 %if %{with ldplayer}
 install -pm 644 ldplayer.1 $RPM_BUILD_ROOT%{_mandir}/man1
 %endif
 install -pm 644 castool.1 chdman.1 imgtool.1 floptool.1 jedutil.1 ldresample.1 \
-    ldverify.1 romcmp.1 testkeys.1 $RPM_BUILD_ROOT%{_mandir}/man1
+    ldverify.1 romcmp.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install -pm 644 mame.6 mess.6 $RPM_BUILD_ROOT%{_mandir}/man6
 popd
 
@@ -299,7 +301,6 @@ popd
 %{_bindir}/%{name}-split
 %{_bindir}/%{name}-src2html
 %{_bindir}/%{name}-srcclean
-%{_bindir}/testkeys
 %{_bindir}/unidasm
 %{_mandir}/man1/castool.1*
 %{_mandir}/man1/chdman.1*
@@ -309,7 +310,6 @@ popd
 %{_mandir}/man1/ldresample.1*
 %{_mandir}/man1/ldverify.1*
 %{_mandir}/man1/romcmp.1*
-%{_mandir}/man1/testkeys.1*
 
 %if %{with ldplayer}
 %files ldplayer
@@ -326,6 +326,11 @@ popd
 
 
 %changelog
+* Wed Apr 27 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.173-1
+- Updated to 0.173
+- Updated the bundled lib versions
+- Removed lua from bundled libs
+
 * Thu Apr 07 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.172-1
 - Updated to 0.172
 - Dropped upstreamed patches
