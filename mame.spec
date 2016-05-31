@@ -5,7 +5,7 @@
 %bcond_with debug
 %bcond_with simd
 
-%global baseversion 173
+%global baseversion 174
 
 # work around low memory on the RPM Fusion builder
 %bcond_without lowmem
@@ -326,6 +326,9 @@ popd
 
 
 %changelog
+* Tue May 31 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-1
+- Updated to 0.174
+
 * Wed Apr 27 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.173-1
 - Updated to 0.173
 - Updated the bundled lib versions
