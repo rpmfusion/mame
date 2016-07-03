@@ -1,28 +1,30 @@
 # ldplayer can be disabled by --without ldplayer or by changing to %bcond_with
 # if it does not build. The debug build is disabled by default, please use
 # --with debug to override
-%bcond_without ldplayer
+%bcond_with ldplayer
 %bcond_with debug
-%bcond_with simd
 
-%global baseversion 173
-
-# work around low memory on the RPM Fusion builder
-%bcond_without lowmem
-%if %{with lowmem}
-%global _find_debuginfo_dwz_opts %{nil}
-%endif
+%global baseversion 175
 
 Name:           mame
 Version:        0.%{baseversion}
 Release:        1%{?dist}
 Summary:        Multiple Arcade Machine Emulator
 
-License:        GPLv2+
+#LGPLv2+:
+#src/mame/audio/snes_snd.cpp: LGPL (v2 or later)
+#src/devices/sound/tiasound.cpp: LGPL (v2) (with incorrect FSF address)
+#src/devices/sound/tiasound.h: LGPL (v2) (with incorrect FSF address)
+#
+#ASL 2.0
+#3rdparty/bgfx 
+
+License:        GPLv2+ and LGPLv2+ and ASL 2.0
 URL:            http://mamedev.org/
-Source0:        http://mamedev.org/downloader.php?file=%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
+Source0:        https://github.com/mamedev/%{name}/releases/download/%{name}0%{baseversion}/%{name}0%{baseversion}s.exe
 Source1:        http://mamedev.org/releases/whatsnew_0%{baseversion}.txt
 Patch0:         %{name}-fortify.patch
+Patch1:         %{name}-genie-systemlua.patch
 
 BuildRequires:  expat-devel
 BuildRequires:  flac-devel
@@ -42,18 +44,19 @@ BuildRequires:  sqlite-devel
 BuildRequires:  zlib-devel
 Requires:       %{name}-data = %{version}-%{release}
 
+#bgfx is not made to be linked to dynamically as per http://forums.bannister.org/ubbthreads.php?ubb=showflat&Number=104437
 Provides:       bundled(bgfx)
-Provides:       bundled(http-parser)
-Provides:       bundled(lsqlite3)
+#luafilesystem and lua-zlib have no fedora packages ATM and are very tiny
 Provides:       bundled(luafilesystem)
 Provides:       bundled(lua-zlib)
+#luv on anything but rawhide is too old
 %if 0%{?fedora} < 25
 Provides:       bundled(luv) = 1.9.0
 %endif
+#lzma is not made to be linked dynamically
 Provides:       bundled(lzma-sdk) = 15.14
+#softfloat is not made to be linked dynamically
 Provides:       bundled(softfloat)
-Provides:       mess = %{version}-%{release}
-Obsoletes:      mess < 0.160-2
 
 
 %description
@@ -76,10 +79,7 @@ emulating the games faithfully.
 
 %package tools
 Summary:        Additional tools for MAME
-Requires:       %{name} = %{version}-%{release}
-
-Provides:       mess-tools = %{version}-%{release}
-Obsoletes:      mess-tools < 0.160-2
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description tools
 %{summary}.
@@ -87,6 +87,7 @@ Obsoletes:      mess-tools < 0.160-2
 %if %{with ldplayer}
 %package ldplayer
 Summary:        Standalone laserdisc player based on MAME
+Requires:       %{name}%{?_isa} = %{version}-%{release}
 
 %description ldplayer
 %{summary}.
@@ -94,9 +95,6 @@ Summary:        Standalone laserdisc player based on MAME
 
 %package data
 Summary:        Data files used by MAME
-
-Provides:       mess-data = %{version}-%{release}
-
 BuildArch:      noarch
 
 %description data
@@ -105,9 +103,6 @@ BuildArch:      noarch
 %package data-software-lists
 Summary:        Software lists used by MAME
 Requires:       %{name}-data = %{version}-%{release}
-
-Provides:       mess-data-software-lists = %{version}-%{release}
-Obsoletes:      mess-data < 0.146-2
 
 BuildArch:      noarch
 
@@ -121,10 +116,11 @@ subpackage due to relatively large size.
 7za x %{SOURCE0}
 install -pm 644 %{SOURCE1} whatsnew_0%{baseversion}.txt
 
-find \( -regex '.*\.\(c\|fsh\|fx\|h\|lua\|map\|md\|txt\|vsh\|xml\)$' \
-    -o -wholename ./makefile \) -exec sed -i 's@\r@@' {} \;
+find \( -regex '.*\.\(c\|cpp\|fsh\|fx\|h\|lua\|make\|map\|md\|txt\|vsh\|xml\)$' \
+    -o -wholename ./makefile \) -exec sed -i 's@\r$@@' {} \;
 
 %patch0 -p1 -b .fortify
+%patch1 -p1 -b .systemlua
 
 # Create ini files
 cat > %{name}.ini << EOF
@@ -158,20 +154,36 @@ video              opengl
 autosave           1
 EOF
 
-%if %{with simd}
-sed -i 's@USE_SIMD        (0)@USE_SIMD        (1)@' src/emu/cpu/rsp/rsp.h
+#ensure genie uses $RPM_OPT_FLAGS and $RPM_LD_FLAGS
+sed -i "s@-Wall -Wextra -Os@$RPM_OPT_FLAGS@" 3rdparty/genie/build/gmake.linux/genie.make
+sed -i "s@\. -s@\. $RPM_LD_FLAGS@" 3rdparty/genie/build/gmake.linux/genie.make
+
+#remove the libraries available as system ones from 3rdparty/
+pushd 3rdparty
+    rm -rf expat
+    rm -rf genie/src/host/lua-5.3.0
+    rm -rf libflac
+    rm -rf libjpeg
+%if 0%{?fedora} >= 25
+    rm -rf libuv
 %endif
+    rm -rf lua
+    rm -rf portaudio
+    rm -rf portmidi
+    rm -rf SDL2
+    rm -rf SDL2-override
+    rm -rf sqlite3
+    rm -rf zlib
+popd
+
+#rename various license files so that they can be installed with %%license
+mv artwork/LICENSE LICENSE.CC0
+mv bgfx/LICENSE LICENSE.BSD3
+mv plugins/json/LICENSE LICENSE.MIT
 
 %build
-#these flags are already included in the genie.lua
-RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's@-O2 -g -pipe -Wall @@')
-
-%if %{with simd}
-RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e 's@-mtune=generic@-march=corei7-avx@')
-%endif
-
 #save some space
-MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
+MAME_FLAGS="NOWERROR=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
     USE_SYSTEM_LIB_ZLIB=1 USE_SYSTEM_LIB_JPEG=1 USE_SYSTEM_LIB_FLAC=1 \
     USE_SYSTEM_LIB_LUA=1 USE_SYSTEM_LIB_SQLITE3=1 USE_SYSTEM_LIB_PORTMIDI=1 \
     USE_SYSTEM_LIB_PORTAUDIO=1 \
@@ -180,23 +192,24 @@ MAME_FLAGS="NOWERROR=1 SYMBOLS=1 OPTIMIZE=2 VERBOSE=1 USE_SYSTEM_LIB_EXPAT=1 \
 %endif
     SDL_INI_PATH=%{_sysconfdir}/%{name};"
 
-%if %{with lowmem}
-MAME_FLAGS="$MAME_FLAGS LDOPTS=-Wl,--no-keep-memory,--reduce-memory-overheads \
-    SYMLEVEL=1"
-%endif
-
 #only use assembly on supported architectures
 %ifnarch %{ix86} x86_64 ppc ppc64
 MAME_FLAGS="$MAME_FLAGS NOASM=1"
 %endif
 
+#standard -g causes builder to run out of memory
+RPM_OPT_FLAGS=$(echo $RPM_OPT_FLAGS | sed -e "s@-g@-g1@")
+
 %if %{with ldplayer}
-make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS TARGET=ldplayer OPT_FLAGS="$RPM_OPT_FLAGS" \
+    LDOPTS="$RPM_LD_FLAGS"
 %endif
 %if %{with debug}
-make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS DEBUG=1 TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS" \
+    LDOPTS="$RPM_LD_FLAGS"
 %else
-make %{?_smp_mflags} $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS"
+make %{?_smp_mflags} $MAME_FLAGS TOOLS=1 OPT_FLAGS="$RPM_OPT_FLAGS" \
+    LDOPTS="$RPM_LD_FLAGS"
 %endif
 
 
@@ -267,12 +280,10 @@ install -pm 644 castool.1 chdman.1 imgtool.1 floptool.1 jedutil.1 ldresample.1 \
     ldverify.1 romcmp.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install -pm 644 mame.6 mess.6 $RPM_BUILD_ROOT%{_mandir}/man6
 popd
+find $RPM_BUILD_ROOT%{_datadir}/%{name} -name LICENSE -exec rm {} \;
 
 
 %files
-%doc docs/config.txt docs/floppy.txt docs/hlsl.txt docs/luaengine.md
-%doc docs/m6502.txt docs/mame.txt docs/newvideo.txt docs/nscsi.txt
-%doc docs/SDL.txt LICENSE.md README.md whatsnew*.txt 
 %config(noreplace) %{_sysconfdir}/%{name}/%{name}.ini
 %dir %{_sysconfdir}/%{name}
 %{_sysconfdir}/skel/.%{name}
@@ -318,6 +329,10 @@ popd
 %endif
 
 %files data
+%doc docs/config.txt docs/floppy.txt docs/hlsl.txt docs/luaengine.md
+%doc docs/m6502.txt docs/mame.txt docs/newvideo.txt docs/nscsi.txt
+%doc docs/SDL.txt README.md whatsnew*.txt 
+%license LICENSE.md LICENSE.BSD3 LICENSE.CC0 LICENSE.MIT
 %{_datadir}/%{name}
 %exclude %{_datadir}/%{name}/hash/*
 
@@ -326,6 +341,39 @@ popd
 
 
 %changelog
+* Wed Jun 29 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.175-1
+- Updated to 0.175
+- Dropped upstreamed patches
+- Removed bundled lua-sqlite and http-parser provides as they were removed
+- Ensured licenses for artwork and plugins are installed appropriately
+- Disabled ldplayer since it does not build currently (Github #1015)
+
+* Tue Jun 28 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-5
+- Updated the License tag
+- Made ldplayer dependent on the main package
+- Dropped leftover mess-data provides
+- Moved documentation to -data subpackage
+- Made -data and -ldplayer Required arched
+
+* Wed Jun 15 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-4
+- Ensured Fedora compiler and linker flags are applied to genie as well
+- Added 3rdparty/ cleanup commands
+- Dropped SIMD and low memory conditionals
+- Separated LICENSE.md to %%license
+- Ensured genie is built using system lua
+- Downgraded debug flags to -g1
+
+* Tue Jun 14 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-3
+- Cleaned up compiler and linker flags
+
+* Mon Jun 13 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-2
+- Updated SourceURL
+- Added comments about bundled libraries
+- Dropped old mess Provides
+
+* Tue May 31 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.174-1
+- Updated to 0.174
+
 * Wed Apr 27 2016 Julian Sikorski <belegdol@fedoraproject.org> - 0.173-1
 - Updated to 0.173
 - Updated the bundled lib versions
